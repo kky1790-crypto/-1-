@@ -23,6 +23,11 @@ description: 내부 매뉴얼 콘텐츠의 누락, 충돌, 환각, 출처 오류
 13. 목차에는 있지만 콘텐츠가 없는 항목 찾기
 14. 콘텐츠는 있지만 목차/검색에서 접근 불가능한 항목 찾기
 15. 실제 사례와 정책이 혼동된 항목 찾기
+16. content_type이 philosophy/principle인데 규칙 어투(단정형)로 쓰인 항목 찾기
+17. scope 또는 authority_status가 없는 콘텐츠 찾기
+18. source_level이 H1/H2/M1이라는 이유만으로 authority_status가
+    official/adopted로 과장된 항목 찾기 (discussed/proposed/
+    local_practice여야 할 것이 격상된 경우)
 
 확실하게 자동 수정 가능한 것만 수정하고,
 의미 판단이 필요한 것은 review_needed로 표시한다.

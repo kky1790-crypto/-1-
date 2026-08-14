@@ -7,8 +7,8 @@
 
 - `docs/PRODUCT.md` — 제품 목적, 사용자, Phase 로드맵
 - `docs/IA.md` — 전체 정보구조(메뉴/화면 구조)
-- `docs/INVENTORY_MODEL.md` — Phase 1 원자료 인벤토리 스키마
-- `docs/DATA_MODEL.md` — Phase 2 콘텐츠 메타데이터 스키마 (source_level, content_type)
+- `docs/INVENTORY_MODEL.md` — Phase 1 원자료 인벤토리 스키마 (1A/1B/1C)
+- `docs/DATA_MODEL.md` — Phase 2 콘텐츠 메타데이터 스키마
 - `docs/SOURCE_POLICY.md` — 출처 레벨 및 표시 규칙
 - `docs/QA_CHECKLIST.md` — 완료 보고 전 점검 체크리스트
 
@@ -77,7 +77,8 @@
 `원문 → 주제 → 출처 → 현재성 → 확실성 → 충돌 여부`로만 펼쳐놓고,
 그다음에야 "그래서 마곡점 공식 기준으로 어떻게 정할까요?"로 넘어간다.
 Phase 1에서 곧바로 문장을 정리해서 만들면 의미가 은근히 바뀔 수 있다 —
-이건 섹션 4(PHILOSOPHY ≠ RULE)와 직결된 위험이다.
+이건 섹션 4(PHILOSOPHY ≠ RULE), 섹션 5(PHASE 1 EXTRACTION RULES)와
+직결된 위험이다.
 
 Phase 3(기본 앱)이 실사용으로 검증되기 전에는 Phase 4(AI)를 붙이지 않는다.
 내부 자료 구조가 정리되지 않은 상태에서 AI 질의응답부터 붙이면 AI가 틀린
@@ -126,54 +127,64 @@ Phase 3(기본 앱)이 실사용으로 검증되기 전에는 Phase 4(AI)를 붙
 
 ---
 
-## 5. SOURCE HIERARCHY ("누가 말했는가")
+## 5. PHASE 1 EXTRACTION RULES (원자료 추출 시 절대 금지사항)
 
-각 콘텐츠는 반드시 다음 출처 레벨 중 하나를 가진다. 상세는 `docs/SOURCE_POLICY.md`.
+Phase 1(Knowledge Inventory)에서는 아직 정답도, 정책도, 매뉴얼도 만들지
+않는다. "무슨 뜻인지 정리하는 것"과 "어떻게 운영해야 하는지 결정하는 것"을
+철저히 분리한다. 다음을 금지한다.
 
-| 레벨 | 의미 |
-|---|---|
-| H1 | 해피니언 공식 |
-| H2 | 사부님 심연/시면에서 전달된 기준 |
-| G1 | 강서 합의 |
-| M1 | 마곡점 공식 운영 기준 |
-| K1 | 강윤의 현재 관점/제안 |
-| CASE | 실제 과거 사례 |
-| IDEA | 아직 검토 중인 아이디어 |
+1. 원문에 없는 의도를 보충하지 않는다.
+2. 여러 발화를 하나의 철학으로 합치지 않는다.
+3. 비슷해 보이는 말들을 임의로 통합하지 않는다.
+4. 현재 규칙인지 과거 규칙인지 추측하지 않는다 (`currentness: unknown`으로 둔다).
+5. 화자의 말과 다른 화자의 말을 섞지 않는다.
+6. 모순을 해결하지 않는다 — 상충하는 원자료는 `conflict`로 연결만 하고
+   어느 쪽이 맞는지 판단하지 않는다.
+7. 잘못된 정보라고 판단해도 원자료 자체는 수정하지 않는다.
+8. 공격적 표현, 욕설, 비문도 의미를 바꿔 순화하지 않는다.
+9. 해석이 필요한 경우 `raw_summary`(원문에 충실한 요약)와
+   `interpretation`(해석)을 분리한다. Phase 1에서는 `interpretation: null`.
+10. 확실하지 않은 화자, 날짜, 맥락은 `unknown`으로 둔다 — 추측해서 채우지 않는다.
+11. 하나의 원자료에 여러 주제가 있으면 임의로 하나만 선택하지 않는다
+    (`topics`는 리스트로 여러 개 허용).
+12. 요약하면서 가치 판단을 추가하지 않는다.
+13. "해피니언은 ~한다"처럼 조직 전체를 대표하는 문장으로 임의 변환하지 않는다.
+14. Phase 1 결과물을 곧바로 사용자용 콘텐츠로 노출하지 않는다 — Phase 2
+    승격 절차(`docs/INVENTORY_MODEL.md`)를 거친 것만 앱에 노출한다.
 
-서로 다른 레벨의 내용을 합쳐 하나의 공식 기준으로 만들지 않는다.
-**K1이나 IDEA를 H1/M1처럼 표현하지 않는다.** 이건 반드시 지킨다.
+상세 스키마와 1A(Raw Capture) / 1B(Classification) / 1C(Conflict Map)
+3단계 구조는 `docs/INVENTORY_MODEL.md` 참고.
 
 ---
 
-## 6. CONTENT TYPE ("그 말의 성격이 무엇인가")
+## 6. THE FOUR AXES — source_level / content_type / scope / authority_status
 
-`source_level`이 "누가 말했는가"라면, `content_type`은 "그 말의 성격이
-무엇인가"다. 이 둘은 서로 독립적인 축이며 **반드시 둘 다 기록한다**
-(스키마는 `docs/DATA_MODEL.md`).
+모든 콘텐츠(인벤토리 항목 포함)는 서로 독립적인 네 개의 축을 가진다.
+이 넷을 섞으면 안 된다. 상세 스키마는 `docs/DATA_MODEL.md`,
+`docs/INVENTORY_MODEL.md` 참고.
 
-```
-content_type:
-  - philosophy      # 철학 — 왜 존재하는가, 무엇을 지향하는가
-  - principle       # 원칙 — 우리는 이런 방향을 중요하게 생각한다
-  - rule            # 규칙 — 반드시 이렇게 한다
-  - guideline       # 판단 기준 — 상황에 따라 다르며 이런 요소를 고려한다
-  - procedure       # 절차 — 실제 업무 순서
-  - metric          # 지표/숫자 기준
-  - case            # 사례
-  - opinion         # 의견
-  - question        # 아직 답이 없는 질문
-```
+| 축 | 질문 | 값 |
+|---|---|---|
+| `source_level` | 누가/어디서 나온 말인가 | H1 · H2 · G1 · M1 · K1 · CASE · IDEA |
+| `content_type` | 무슨 종류의 말인가 | philosophy · principle · rule · guideline · procedure · metric · case · opinion · question |
+| `scope` | 누구/어디에 적용되는가 | happynian_all · gangseo · magok · leader · designer · partner · customer_service · personal_growth · (필요시 확장) |
+| `authority_status` | 지금 이 조직에서 실제로 어떤 권위를 갖는가 | official · adopted · local_practice · proposed · discussed · personal_view · unknown |
+
+**`source_level`과 `authority_status`는 다르다.** 사부님이 한 말이라고
+해서 무조건 현재 조직의 공식 운영 규정인 것은 아니다(`H2` + `discussed`일
+수 있다). 반대로 마곡점에서 실제로 매일 하고 있어도 해피니언 전체 공식
+정책은 아닐 수 있다(`M1` + `local_practice` 또는 `adopted`).
 
 예:
 
-- `source_level: H2` + `content_type: philosophy` = 사부님이 말했지만 **철학**
-  (반드시 지켜야 하는 규칙이 아님)
-- `source_level: M1` + `content_type: procedure` = 마곡점에서 실제로
-  **따라야 하는 업무 절차**
+- `source_level: H2` + `content_type: principle` + `authority_status: discussed`
+  = 사부님이 심연에서 말한 원칙이지만, 아직 논의 단계일 뿐 공식 채택된
+  규정이 아니다.
+- `source_level: M1` + `content_type: procedure` + `authority_status: adopted`
+  = 마곡점에서 실제로 채택되어 쓰이는 절차다.
 
-이 둘을 분리하지 않으면 나중에 AI가 아주 높은 확률로 섞는다. 예를 들어
-"사부님이 말씀하셨다(H2)"는 이유만으로 철학적 발언을 절차처럼 답하게 되는
-사고가 발생한다.
+**K1이나 IDEA를 H1/M1처럼, `discussed`/`proposed`를 `official`/`adopted`처럼
+표현하지 않는다.** 이건 반드시 지킨다.
 
 ---
 
@@ -249,7 +260,7 @@ content_type:
 Phase 4에서 AI 답변을 만들 때는 다음 순서를 따른다:
 
 결론 → 확인된 기준 → 왜 그런가 → 현재 상황에 적용 → 관련 사례 →
-주의할 점 → 출처(source_level + content_type) → 확실성
+주의할 점 → 출처(source_level + content_type + scope + authority_status) → 확실성
 
 필요한 경우 "관리자 확인 필요"를 명확하게 표시한다. 섹션 7의 규칙/원칙/판단
 구분을 답변에도 그대로 유지한다.
@@ -316,10 +327,13 @@ DEVIL ADVOCATE → FIX → RUN AGAIN → REGRESSION TEST → FINAL CHECK
 5. 모바일에서 사용할 수 있는가?
 6. 신입이 이해할 수 있는가?
 7. 동일 내용이 중복되어 있지 않은가?
-8. 기준 출처(source_level)와 성격(content_type)이 명확한가?
+8. 기준의 네 축(source_level / content_type / scope / authority_status)이
+   모두 명확한가?
 9. 오래된 기준이 최신처럼 표시되지 않는가?
 10. 사용자가 애매한 답을 공식 규칙으로 오해할 가능성은 없는가?
 11. 철학/원칙이 규칙처럼 단정적으로 표현되지 않았는가? (섹션 4)
+12. Phase 1 산출물이라면 섹션 5(PHASE 1 EXTRACTION RULES)를 어긴 곳은
+    없는가?
 
 문제가 있으면 사용자의 추가 지시를 기다리지 말고 수정한다.
 

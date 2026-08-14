@@ -10,6 +10,8 @@ term: ""
 category: 용어사전
 source_level: ""            # H1 | H2 | G1 | M1 | K1
 content_type: ""             # 보통 principle 또는 procedure — 용어가 가리키는 성격에 맞게
+scope: [happynian_all]       # 대부분 전체 적용. 특정 대상 한정이면 변경
+authority_status: ""          # official | adopted | local_practice | proposed | discussed | personal_view | unknown
 format: glossary
 status: draft                # confirmed | review_needed | draft | deprecated
 owner: ""

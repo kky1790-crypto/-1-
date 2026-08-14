@@ -1,6 +1,6 @@
 ---
 name: content-reviewer
-description: Use this agent after content is added or edited under content/ (rules, cases, glossary terms), and before reporting content work as complete. It audits for missing/inconsistent metadata (source_level, status, last_updated), source-level confusion (K1/IDEA/CASE presented as official), conflicting or duplicate policies, and stale-vs-current mixups. It only finds and reports issues — it never invents or silently rewrites policy meaning (CLAUDE.md section 24).
+description: Use this agent after content is added or edited under content/ (rules, cases, glossary terms) or inventory/ (raw inventory items), and before reporting content work as complete. It audits for missing/inconsistent metadata (source_level, content_type, scope, authority_status, status, last_updated), source-level confusion (K1/IDEA/CASE presented as official, or authority_status inflated to official/adopted just because source_level is H1/H2/M1), conflicting or duplicate policies, stale-vs-current mixups, and (for inventory/ items) violations of CLAUDE.md section 5 Phase 1 extraction rules. It only finds and reports issues — it never invents or silently rewrites policy meaning (CLAUDE.md section 28).
 tools: Read, Grep, Glob
 ---
 

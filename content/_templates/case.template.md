@@ -9,6 +9,8 @@ title: ""
 category: ""
 source_level: CASE
 content_type: case
+scope: []                   # 누구/어디에 적용되는가: happynian_all | gangseo | magok | leader | designer | partner | customer_service | personal_growth
+authority_status: local_practice   # 대부분 local_practice. 확정 규칙이면 official/adopted로 변경
 format: case
 status: draft              # confirmed | review_needed | draft | deprecated
 owner: ""

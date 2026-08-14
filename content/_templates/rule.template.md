@@ -11,6 +11,8 @@ title: ""
 category: ""              # docs/IA.md 의 목차 경로
 source_level: ""           # 누가 말했는가: H1 | H2 | G1 | M1 | K1 | IDEA
 content_type: ""           # 그 말의 성격: philosophy | principle | rule | guideline | procedure | metric | opinion
+scope: []                   # 누구/어디에 적용되는가: happynian_all | gangseo | magok | leader | designer | partner | customer_service | personal_growth
+authority_status: ""        # official | adopted | local_practice | proposed | discussed | personal_view | unknown
 format: rule
 status: draft              # confirmed | review_needed | draft | deprecated
 owner: ""

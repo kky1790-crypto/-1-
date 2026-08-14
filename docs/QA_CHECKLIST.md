@@ -1,6 +1,6 @@
 # QA_CHECKLIST.md — 완료 보고 전 체크리스트
 
-`CLAUDE.md` 11장(DO NOT CLAIM COMPLETION EARLY)에 따라, 아래 항목을 모두
+`CLAUDE.md` 14장(DO NOT CLAIM COMPLETION EARLY)에 따라, 아래 항목을 모두
 통과하지 못한 작업은 "완료"라고 보고하지 않는다. `/final-check` Skill을
 실행하면 이 체크리스트 전체를 따라간다.
 
@@ -29,6 +29,12 @@
       표현되지 않았는가 (`CLAUDE.md` 4장 PHILOSOPHY ≠ RULE)
 - [ ] `source_level`과 `content_type`이 둘 다 기록되어 있고 서로 혼동되지
       않는가 (`docs/DATA_MODEL.md`)
+- [ ] `scope`, `authority_status`가 기록되어 있고, `source_level`이
+      높다는 이유만으로 `authority_status`를 `official`/`adopted`로
+      과장하지 않았는가 (`docs/SOURCE_POLICY.md` 6번)
+- [ ] (Phase 1 산출물인 경우) `CLAUDE.md` 5장(PHASE 1 EXTRACTION RULES)
+      14개 항목을 위반한 곳이 없는가 — 특히 `interpretation`이 채워져
+      있지 않은가, `conflict`가 "누가 맞는지" 판단에 쓰이지 않았는가
 
 ## 3. UX (`/ux-audit` 기준, 신입 파트너 관점)
 - [ ] "오늘 처음 출근했는데 무엇부터 봐야 하지?" → 10초 내 도달 가능한가

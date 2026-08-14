@@ -47,6 +47,39 @@
   Phase 1/2 표기를 새 Phase 0~5 체계로 갱신 | 사유: 문서 간 Phase 번호
   불일치 방지 | 영향 범위: 문서 전반 | 출처: 사용자(강윤) 지시
 
+## 2026-08-14 (3차 라운드) — Phase 1 인벤토리 설계 보강
+
+- CLAUDE.md 5장(PHASE 1 EXTRACTION RULES) 신설: 원문 의도 보충 금지,
+  여러 발화 통합 금지, 모순 해결 금지 등 14개 금지사항 명문화.
+  6장을 "THE FOUR AXES"로 재구성해 source_level/content_type/scope/
+  authority_status 네 축을 하나의 모델로 통합. 섹션 번호 전면 재배열
+  (0~30, 31개 섹션) | 사유: Phase 1(원자료 인벤토리) 진입 전 안전장치
+  보강 | 영향 범위: 전체 프로젝트 지침 | 출처: 사용자(강윤) 지시
+- docs/INVENTORY_MODEL.md 전면 보강: Phase 1을 1A(Raw Capture) /
+  1B(Classification) / 1C(Conflict Map) 3단계로 분리. `topics`/`scope`/
+  `possible_content_type`을 리스트(다중 허용)로 변경, `raw_summary`와
+  `interpretation`(Phase 1에서는 항상 null) 분리, `certainty`/
+  `currentness`/`uncertainty`(speaker/date/context/meaning 개별 표시)
+  필드 추가, `conflict`를 "누가 맞는가"가 아닌 "가치 간 긴장(tension)"
+  연결 용도로 재정의 | 사유: 원자료 추출 과정에서 의미가 바뀌는 것을
+  구조적으로 막기 위함 | 영향 범위: Phase 1 스키마 | 출처: 사용자(강윤) 지시
+- docs/DATA_MODEL.md에 `scope`(누구/어디에 적용되는가), `authority_status`
+  (official/adopted/local_practice/proposed/discussed/personal_view/
+  unknown, 지금 조직에서 실제로 어떤 권위를 갖는가) 필드 추가.
+  source_level이 높다는 이유만으로 authority_status가 과장되지 않도록
+  경고 추가 | 사유: "사부님이 말했다"≠"공식 규정", "마곡점에서 매일
+  한다"≠"해피니언 전체 정책" 구분 | 영향 범위: Phase 2 콘텐츠 스키마 |
+  출처: 사용자(강윤) 지시
+- inventory/_templates/item.template.md, content/_templates/
+  {rule,case,glossary}.template.md, docs/SOURCE_POLICY.md,
+  docs/QA_CHECKLIST.md, .claude/skills/content-audit,
+  .claude/agents/{qa-reviewer,content-reviewer}를 새 필드/섹션 번호와
+  동기화. CLAUDE.md 섹션 재배열로 발생한 문서 간 참조 번호 불일치
+  4건(qa-reviewer.md 2곳, QA_CHECKLIST.md, tests/README.md) 발견 및 수정 |
+  사유: 문서 간 상호 참조 무결성 | 영향 범위: 템플릿/스킬/에이전트/문서
+  전반 | 출처: 사용자(강윤) 지시
+
 다음 단계 (미완료): 실제 앱 구현 없음. content/, inventory/items/ 아래
-실제 데이터 없음 (템플릿만 존재). 기술 스택 미결정. Phase 1 원자료
-인벤토리는 사용자가 원자료를 정리해서 제공한 뒤 시작.
+실제 데이터 없음 (템플릿만 존재, `inventory/items/`는 `.gitkeep`만 있음).
+기술 스택 미결정. Phase 1 원자료 인벤토리는 사용자가 원자료를 정리해서
+제공한 뒤 시작.

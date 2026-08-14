@@ -1,85 +1,192 @@
 # INVENTORY_MODEL.md — Phase 1 원자료 인벤토리 스키마
 
 Phase 1(Knowledge Inventory)의 목적은 대화·경험 등에 흩어진 원자료를
-**규칙화하지 않고 있는 그대로** 수집·분류하는 것이다.
+**규칙화하지 않고 있는 그대로** 수집·분류하는 것이다. 아직 정답도, 정책도,
+매뉴얼도 만들지 않는다.
+
+**"무슨 뜻인지 정리하는 것"과 "어떻게 운영해야 하는지 결정하는 것"을
+철저히 분리한다.** 예를 들어 원자료가
+
+> "고객 앞에서 파트너가 기본적인 기술 질문을 하면 고객이 불안해할 수 있다."
+
+라면, Phase 1에서는 여기서 "그러면 고객 앞 질문 금지" / "이것이 마곡점
+원칙" / "이렇게 교육해야 함"으로 넘어가지 않는다. 원문을 있는 그대로,
+그리고 그 성격에 대한 **가설**만 남긴다.
+
+이 단계에서 절대 하면 안 되는 것 14가지는 `CLAUDE.md` 5장
+(PHASE 1 EXTRACTION RULES) 참고. 인벤토리 항목은 그 자체로 공식 기준이
+아니다 — 반드시 `review_needed` 또는 `draft` 상태로 시작하며, 확정
+(Phase 2로 승격)은 별도 검토를 거친다.
+
+---
+
+## Phase 1의 3단계
+
+Phase 1은 한 번에 끝내지 않고 세 단계로 나눠서 진행한다. 같은 항목이라도
+1A에서 곧바로 1B/1C까지 다 채울 필요는 없다 — 정보가 부족하면 다음 단계
+필드는 `unknown`/`null`로 비워두고 넘어간다.
+
+### 1A. Raw Capture
+
+원자료를 최대한 손대지 않고 저장한다. 이 단계에서 채우는 것:
+`id`, `topics`, `source`(누가/언제/어떤 맥락), `raw_excerpt`(가능하면 실제
+발화 그대로), `raw_summary`(원문에 최대한 충실한 요약).
+**옳고 그름, 성격 분류, 충돌 여부는 아직 판단하지 않는다.**
+
+### 1B. Classification
+
+내용의 **성격만** 분류한다: `possible_content_type`, `source_level`,
+`scope`, `authority_status`, `certainty`, `currentness`, `uncertainty`.
+이때도 옳고 그름 판단은 하지 않는다 — "이게 철학처럼 보인다"까지만
+말하고 "그러니까 규칙이 아니다/맞다"라고 결론 내지 않는다.
+
+### 1C. Conflict Map
+
+서로 충돌하거나 긴장되는 원자료를 연결한다. 이게 이 프로젝트에서 특히
+중요하다. 예:
+
+> "사람이 원할 때까지 기다린다." ↔ "미용사로서 기본 기술은 일정 기간 안에
+> 갖춰야 한다."
+
+이 둘은 모순이 아니라 둘 다 동시에 존재할 수 있는 **긴장 관계**다. 하나를
+삭제하거나 어느 쪽이 맞는지 판단하지 않고 다음처럼 남긴다:
 
 ```
-원문 → 주제 → 출처 → 현재성 → 확실성 → 충돌 여부
+개인 성장의 자율성
+  ↕ tension
+직업적 책임의 최소 기준
 ```
 
-이 단계에서는 문장을 다듬거나 결론을 내리지 않는다. 원문을 요약할 때도
-화자의 의도보다 강한 단정적 표현으로 바꾸지 않는다 (`CLAUDE.md` 4장
-PHILOSOPHY ≠ RULE). 인벤토리 항목은 그 자체로 공식 기준이 아니다 — 반드시
-`review_needed` 또는 `draft` 상태로 시작하며, 확정(Phase 2로 승격)은 별도
-검토를 거친다.
+`conflict.exists = true`인 항목끼리 `conflict.related_items`로 서로
+연결하고, `conflict.tension`에 이 긴장을 "누가 맞는가"가 아니라 **"어떤
+가치와 어떤 가치가 부딪히는가"** 형태로 서술한다.
+
+---
 
 ## 저장 위치
 
 `inventory/items/`에 항목당 파일 하나. 파일명: `<id>-<짧은-slug>.md`
-(예: `M-00127-고객-앞-기술-질문.md`). 템플릿: `inventory/_templates/item.template.md`.
+(예: `INV-0001-고객-앞-기술-질문.md`). 템플릿:
+`inventory/_templates/item.template.md`.
 
 ## 스키마
 
 ```yaml
-id: M-00127
+id: INV-0001
 
-topic: 고객 앞에서 파트너가 기술 질문하는 상황
+# 1A. Raw Capture -----------------------------------------------------
+topics:                       # 리스트. 하나의 원자료가 여러 주제를 다룰 수 있음
+  - 고객 앞에서의 기술 질문
 
 source:
-  type: conversation        # conversation | document | memo | interview 등
-  speaker: 강윤/효리/계훈
-  date: 2026-08
+  speaker: 강윤/효리/계훈       # 확실하지 않으면 unknown
+  date: 2026-08                # 확실하지 않으면 unknown
+  context: ""                   # 어떤 상황/대화에서 나온 말인지, 확실하지 않으면 unknown
+
+raw_excerpt: |
+  (가능하면 실제 발화를 그대로. 없으면 비워둔다)
 
 raw_summary: |
   고객 앞에서 파트너가 자신이 맡을 기술의 기본 원리 자체를
   모르는 것처럼 질문하면 고객의 신뢰가 낮아질 수 있다는 의견.
 
-source_level: K1            # H1 | H2 | G1 | M1 | K1 | CASE | IDEA — 확신 없으면 가장 낮은 확실성 쪽으로
-possible_content_type: opinion   # docs/DATA_MODEL.md 의 content_type 후보 (확정 아님, 가설)
+interpretation: null           # Phase 1에서는 항상 null. 해석은 후속 단계에서만 채움
 
-status: review_needed        # 인벤토리 단계는 거의 항상 review_needed 또는 draft
+# 1B. Classification ----------------------------------------------------
+source_level: K1                # H1 | H2 | G1 | M1 | K1 | CASE | IDEA | unknown
 
-possible_related_topics:
-  - 고객 신뢰
-  - 파트너 교육
-  - 시술 중 커뮤니케이션
+possible_content_type:          # 리스트. 복수 후보 허용
+  - opinion
+  - guideline
 
-conflict: true                # 이 주제에 대해 서로 다른/상충하는 의견이 존재하는가
-conflict_detail: |
-  질문 자체를 막으면 학습 기회를 제한할 수 있다는 의견도 존재.
+scope:                          # 리스트. 확장 가능한 enum 취급 (아래 참고)
+  - customer_service
+  - partner
 
-official_rule: 아직 없음      # 이 주제에 대한 확정된 공식 기준이 있으면 링크, 없으면 "아직 없음"
+authority_status: discussed     # official | adopted | local_practice | proposed |
+                                 # discussed | personal_view | unknown
+
+certainty: inferred             # explicit(직접 인용) | inferred(맥락에서 추정) | unclear
+
+currentness: unknown            # current | historical | unknown — 추측 금지, 모르면 unknown
+
+uncertainty:                    # 어떤 부분이 불확실한지 명시적으로 표시
+  speaker: known                # known | unknown
+  date: known                   # known | unknown
+  context: unknown              # known | unknown
+  meaning: clear                # clear | unclear
+
+# 1C. Conflict Map --------------------------------------------------------
+conflict:
+  exists: true
+  related_items: []              # 긴장 관계에 있는 다른 item id 리스트
+  tension: |
+    질문 자체를 막으면 학습 기회를 제한할 수 있다는 의견도 존재.
+    (어느 쪽이 맞는지 판단하지 않는다 — 두 가치가 부딪히는 지점만 서술)
+
+# Phase 2 승격 여부 -------------------------------------------------------
+official_rule:
+  status: not_confirmed          # not_confirmed | confirmed
+  ref: ""                         # confirmed면 content/ 경로
+
+notes: ""
 ```
 
 ## 필드 설명
 
 | 필드 | 설명 |
 |---|---|
-| `id` | 고유 식별자. 접두어로 출처를 힌트할 수 있음(`M-`=마곡점 관련 등), 강제 규칙은 아님 |
-| `topic` | 이 원자료가 다루는 주제 (한 문장) |
-| `source` | 원자료가 어디서 나왔는지 (대화/문서/메모 등, 화자, 시기) |
-| `raw_summary` | 원문 또는 원문에 최대한 가까운 요약. **의미를 바꾸지 않는다** |
-| `source_level` | 확정이 아니라 현재 근거 기준 잠정 분류. 애매하면 낮은 레벨(K1/IDEA)로 |
-| `possible_content_type` | `docs/DATA_MODEL.md`의 `content_type` 후보. 어디까지나 가설 |
-| `status` | 인벤토리 단계 대부분 `review_needed`/`draft`. Phase 2로 승격되기 전엔 `confirmed` 금지 |
-| `possible_related_topics` | 다른 주제와의 연결 후보 |
-| `conflict` / `conflict_detail` | 같은 주제에 대해 상충하는 의견/기준이 있는지 |
-| `official_rule` | 이미 확정된 공식 기준이 있으면 그 콘텐츠로 링크, 없으면 "아직 없음" |
+| `id` | 고유 식별자 (`INV-0001`처럼 순번). 재사용하지 않는다 |
+| `topics` | 이 원자료가 다루는 주제들 (리스트, 1개 이상). 하나만 있다고 임의로 단일화하지 않는다 |
+| `source.speaker/date/context` | 원자료의 출처 메타. 모르면 `unknown` — 추측해서 채우지 않는다 |
+| `raw_excerpt` | 실제 발화 원문. 확보되면 최우선으로 기록 |
+| `raw_summary` | 원문에 최대한 충실한 요약. 가치 판단/해석을 섞지 않는다 |
+| `interpretation` | 해석. **Phase 1에서는 항상 `null`** — 채우는 순간 Phase 1 규칙 위반 |
+| `source_level` | 누가/어디서 나온 말인가 (`docs/SOURCE_POLICY.md`) |
+| `possible_content_type` | 무슨 종류의 말처럼 보이는가에 대한 가설(복수 허용). `docs/DATA_MODEL.md` 참고 |
+| `scope` | 누구/어디에 적용되는 것처럼 보이는가(복수 허용). 아래 enum 참고 |
+| `authority_status` | 지금 조직에서 실제로 어떤 권위를 갖는 것처럼 보이는가 |
+| `certainty` | 이 추출 자체가 얼마나 확실한가 (직접 인용/추정/불명확) |
+| `currentness` | 지금도 유효한 것으로 보이는가, 과거 것인가, 모르는가 |
+| `uncertainty` | 화자/날짜/맥락/의미 중 무엇이 불확실한지 개별적으로 표시 |
+| `conflict` | 이 항목과 긴장 관계에 있는 다른 항목들 (옳고 그름이 아니라 연결) |
+| `official_rule` | Phase 2로 승격되어 확정 콘텐츠가 됐는지 여부와 경로 |
+| `notes` | 위 필드로 표현 안 되는 것 (자유 서술) |
+
+### `scope` — 확장 가능한 enum
+
+초기 값: `happynian_all`, `gangseo`, `magok`, `leader`, `designer`,
+`partner`, `customer_service`, `personal_growth`. 실제 원자료를 다루다
+새로운 적용 범위가 필요하면 이 목록에 추가한다 (`CLAUDE.md` 10장
+INFORMATION ARCHITECTURE와 마찬가지로 임의 삭제는 하지 않는다).
+
+---
 
 ## Phase 2로 승격하는 절차
 
-1. 같은 주제의 인벤토리 항목을 모은다 (충돌 여부 포함해서 전부 확인).
+1. 같은 주제(topics)의 인벤토리 항목을 모은다 — 충돌(conflict) 관계에
+   있는 항목까지 전부 함께 확인한다.
 2. 사용자(강윤)에게 확정 여부를 확인한다 — AI가 임의로 확정하지 않는다.
+   이때 비로소 `interpretation`을 채우고, `content_type`/`scope`/
+   `authority_status`를 가설(possible_*)에서 확정값으로 바꾼다.
 3. 확정된 내용만 `docs/DATA_MODEL.md` 스키마로 변환해 `content/` 아래
    알맞은 출처 폴더에 저장하고 `status: confirmed`로 바꾼다.
 4. `CHANGELOG.md`에 인벤토리 → 콘텐츠 승격 이력을 남긴다.
-5. 원본 인벤토리 항목은 삭제하지 않고 `official_rule` 필드에 새 콘텐츠로의
-   링크를 추가해 남겨둔다 (원자료 추적성 유지, `CLAUDE.md` 22장).
+5. 원본 인벤토리 항목은 삭제하지 않고 `official_rule.status: confirmed`,
+   `official_rule.ref`에 새 콘텐츠로의 링크를 추가해 남겨둔다 (원자료
+   추적성 유지, `CLAUDE.md` 22장). 여전히 남아있는 `conflict.tension`은
+   콘텐츠 승격 후에도 지우지 않는다 — 승격된 규칙과 별개로 그 긴장은
+   현실에 계속 존재할 수 있다.
 
 ## 지금 이 시점에서 하지 않는 것
 
-- AI가 주제 이름만 보고 `raw_summary`나 결론을 지어내는 것 (`CLAUDE.md` 3장 위반)
+`CLAUDE.md` 5장(PHASE 1 EXTRACTION RULES) 14개 항목을 그대로 적용한다.
+특히:
+
+- AI가 주제 이름만 보고 `raw_summary`나 결론을 지어내는 것
 - 인벤토리 항목을 곧바로 `status: confirmed`로 표시하는 것
-- 인벤토리 단계에서 철학적 발언을 규칙처럼 요약하는 것 (`CLAUDE.md` 4장 위반)
+- 인벤토리 단계에서 철학적 발언을 규칙처럼 요약하는 것
+- `conflict`를 "어느 쪽이 맞는지" 판단하는 용도로 쓰는 것 (연결 용도로만)
 
 실제 인벤토리 항목 작성은 사용자가 원자료를 정리해서 제공한 뒤 진행한다.
+`inventory/items/`는 현재 비어 있다.

@@ -2,30 +2,56 @@
 TEMPLATE — 이 파일 자체는 실제 원자료가 아니다.
 새 인벤토리 항목을 만들 때 이 파일을 복사해서 값을 채운 뒤
 inventory/items/<id>-<짧은-slug>.md 로 저장한다.
-스키마 설명: docs/INVENTORY_MODEL.md
+스키마 설명 및 1A/1B/1C 단계 구분: docs/INVENTORY_MODEL.md
+작성 전 CLAUDE.md 5장(PHASE 1 EXTRACTION RULES)을 반드시 확인한다.
 -->
 
 ---
 id: ""
-topic: ""
+
+# 1A. Raw Capture
+topics: []
 
 source:
-  type: ""              # conversation | document | memo | interview 등
-  speaker: ""
-  date: ""                # YYYY-MM 정도의 정밀도로 충분
+  speaker: ""            # 모르면 unknown
+  date: ""                # 모르면 unknown
+  context: ""             # 모르면 unknown
 
-raw_summary: |
-  (원문 또는 원문에 최대한 가까운 요약. 의미를 바꾸지 않는다.)
+raw_excerpt: ""
 
-source_level: ""          # H1 | H2 | G1 | M1 | K1 | CASE | IDEA — 확신 없으면 낮은 확실성 쪽으로
-possible_content_type: "" # philosophy | principle | rule | guideline | procedure | metric | case | opinion | question
+raw_summary: ""
 
-status: review_needed      # 인벤토리 단계는 거의 항상 review_needed 또는 draft
+interpretation: null      # Phase 1에서는 항상 null
 
-possible_related_topics: []
+# 1B. Classification
+source_level: ""          # H1 | H2 | G1 | M1 | K1 | CASE | IDEA | unknown
 
-conflict: false
-conflict_detail: ""
+possible_content_type: []  # philosophy | principle | rule | guideline | procedure | metric | case | opinion | question
 
-official_rule: 아직 없음
+scope: []                  # happynian_all | gangseo | magok | leader | designer | partner | customer_service | personal_growth
+
+authority_status: unknown  # official | adopted | local_practice | proposed | discussed | personal_view | unknown
+
+certainty: unclear          # explicit | inferred | unclear
+
+currentness: unknown        # current | historical | unknown
+
+uncertainty:
+  speaker: unknown           # known | unknown
+  date: unknown               # known | unknown
+  context: unknown            # known | unknown
+  meaning: unclear             # clear | unclear
+
+# 1C. Conflict Map
+conflict:
+  exists: false
+  related_items: []
+  tension: ""
+
+# Phase 2 승격 여부
+official_rule:
+  status: not_confirmed
+  ref: ""
+
+notes: ""
 ---

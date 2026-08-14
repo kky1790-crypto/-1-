@@ -27,6 +27,11 @@
    `principle`이면 규칙처럼 단정적으로 표현하지 않는다 (`CLAUDE.md` 7장
    RULE vs PRINCIPLE vs JUDGMENT). "공식이니까 규칙"이 아니라
    "content_type이 rule이어야 규칙"이다.
+6. `source_level`이 높다고(H1/H2) `authority_status`도 자동으로 `official`/
+   `adopted`인 것은 아니다 — 이 둘도 섞지 않는다. 사부님이 심연에서 한
+   말이라도 아직 `discussed`(논의 단계)일 수 있고, 마곡점(`M1`)에서 매일
+   실제로 하는 일이라도 `local_practice`일 뿐 해피니언 전체 공식 정책은
+   아닐 수 있다. 상세: `docs/DATA_MODEL.md`의 `authority_status` 표.
 
 ## 화면 표시 규칙
 
