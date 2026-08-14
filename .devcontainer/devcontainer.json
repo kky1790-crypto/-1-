@@ -1,0 +1,16 @@
+{
+  "name": "해피니언 마곡점 판단 시스템",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "forwardPorts": [4000, 4100],
+  "portsAttributes": {
+    "4000": {
+      "label": "검수 관리자 화면 (review-admin)",
+      "onAutoForward": "openBrowser"
+    },
+    "4100": {
+      "label": "식구용 화면 (app)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postStartCommand": "bash .devcontainer/start.sh"
+}
