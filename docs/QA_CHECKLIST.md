@@ -25,6 +25,10 @@
 - [ ] 목차에는 있지만 콘텐츠가 없는 항목이 없는가
 - [ ] 콘텐츠는 있지만 목차/검색에서 접근 불가능한 항목이 없는가
 - [ ] 실제 사례와 정책이 혼동된 항목이 없는가
+- [ ] `content_type`이 `philosophy`/`principle`인 내용이 규칙처럼 단정적으로
+      표현되지 않았는가 (`CLAUDE.md` 4장 PHILOSOPHY ≠ RULE)
+- [ ] `source_level`과 `content_type`이 둘 다 기록되어 있고 서로 혼동되지
+      않는가 (`docs/DATA_MODEL.md`)
 
 ## 3. UX (`/ux-audit` 기준, 신입 파트너 관점)
 - [ ] "오늘 처음 출근했는데 무엇부터 봐야 하지?" → 10초 내 도달 가능한가
