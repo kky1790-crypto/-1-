@@ -226,5 +226,8 @@ INFORMATION ARCHITECTURE와 마찬가지로 임의 삭제는 하지 않는다).
 - 인벤토리 단계에서 철학적 발언을 규칙처럼 요약하는 것
 - `conflict`를 "어느 쪽이 맞는지" 판단하는 용도로 쓰는 것 (연결 용도로만)
 
-실제 인벤토리 항목 작성은 사용자가 원자료를 정리해서 제공한 뒤 진행한다.
-`inventory/items/`는 현재 비어 있다.
+`inventory/items/`에는 현재 원자료 3건이 있다(전부 `pending_review`) —
+review-admin 검수 게이트 프로토타입을 사용자가 직접 써볼 수 있도록, 이
+프로젝트를 설계하는 대화 중 사용자가 실제로 예로 든 문장만 사용해 등록한
+것이다(`review-admin/scripts/seed-initial-three.js` 참고). 사용자가 이
+구조를 확인하기 전까지는 나머지 원자료를 추가하지 않는다.

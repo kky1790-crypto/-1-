@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>해피니언 마곡점 판단 시스템</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header id="topbar">
+  <h1>해피니언 마곡점</h1>
+  <p class="tagline">이 상황에서는 어떻게 하지? — 판단 시스템 (프로토타입 v1)</p>
+</header>
+
+<div id="layout">
+  <section id="listView">
+    <div id="searchBox">
+      <input id="searchInput" type="search" placeholder="예: 고객 앞에서 질문해도 돼? / 정액권 규칙" />
+    </div>
+
+    <div id="scopeChips" aria-label="분류 필터"></div>
+
+    <h2 id="listHeading">최근 승인된 내용</h2>
+    <ul id="itemList"></ul>
+    <div id="emptyState" hidden>
+      <p>아직 승인된 내용이 없습니다.</p>
+      <p class="muted">관리자가 원자료를 검수 중입니다 — 승인되면 이 화면에 바로 나타납니다.
+      아직 검토되지 않았거나 확인이 더 필요한 내용은 여기에 보이지 않습니다.</p>
+    </div>
+  </section>
+
+  <section id="detailView" hidden>
+    <button id="btnBack" type="button">← 목록으로</button>
+    <div id="detailContent"></div>
+  </section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -15,8 +15,14 @@
 ## 현재 상태 (Phase 로드맵 기준)
 
 - Phase 0 (프로젝트 기반: 헌법/Skills/Agents/폴더 구조) — 완료
-- Phase 1 (Knowledge Inventory) — 진행 예정, `inventory/items/`는 아직 비어 있음
-- Phase 2~5 — 미착수
+- Phase 1 (Knowledge Inventory) — 진행 중, `inventory/items/`에 원자료 3건
+  (전부 `pending_review`)
+- Phase 1.5 (`review-admin/` 관리자 검수 시스템) — 프로토타입 v1
+- Phase 2 (`content/`) — 미착수, 여전히 빈 상태
+- Phase 3 (`app/` 식구용 앱) — 프로토타입 v1, `review-admin`의 승인된
+  항목만 재노출
+- Phase 4~5 — 미착수
 
-실제 앱 코드와 실제 콘텐츠는 아직 없다. `content/`, `inventory/items/`는
-전부 빈 상태이며 `_templates/`만 존재한다.
+사용자가 지금의 3건짜리 검수/공개 구조를 직접 써보고 확인하기 전까지는
+나머지 원자료를 추가하지 않는다. 실행 방법은 `review-admin/README.md`,
+`app/README.md` 참고.

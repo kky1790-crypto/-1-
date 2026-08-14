@@ -1,0 +1,16 @@
+{
+  "name": "happynian-magok-staff-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "해피니언 마곡점 판단 시스템 — Phase 3 식구용 앱 (프로토타입 v1)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
