@@ -9,6 +9,8 @@ inventory/items/<id>-<짧은-slug>.md 로 저장한다.
 ---
 id: ""
 
+title: ""
+
 # 1A. Raw Capture
 topics: []
 
@@ -47,6 +49,13 @@ conflict:
   exists: false
   related_items: []
   tension: ""
+
+# 검수 워크플로 (review-admin)
+review_status: pending_review  # pending_review | editing | approved | hold | rejected | archived
+reviewed_by: null
+reviewed_at: null
+review_note: ""
+duplicate_of: []
 
 # Phase 2 승격 여부
 official_rule:

@@ -1,0 +1,210 @@
+:root {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --border: #ddd8cf;
+  --text: #26241f;
+  --muted: #74705f;
+  --accent: #a6521c;
+  --accent-bg: #f4e6d8;
+  --raw-bg: #fdf6e3;
+  --raw-border: #e8d9a8;
+  --summary-bg: #eef3f1;
+  --danger: #b3261e;
+  --danger-bg: #fbeceb;
+  --approve: #1f6f4a;
+  --approve-bg: #e4f2ea;
+  --warn-bg: #fdece0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+#topbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+#topbar h1 { font-size: 1.05rem; margin: 0; }
+#stats { font-size: 0.78rem; color: var(--muted); }
+
+/* 좁은 화면(휴대폰)에서는 통계 문구가 길어 h1과 flex-squeeze로
+   한 글자씩 줄바꿈되는 문제가 있었다 — 세로로 쌓아서 회피 (위 기본값).
+   화면이 넉넉해지면 한 줄로. */
+@media (min-width: 640px) {
+  #topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #stats { font-size: 0.9rem; white-space: nowrap; }
+}
+
+#layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 52px);
+}
+
+#queuePane {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+#filters { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.filter-row { display: flex; gap: 8px; }
+.filter-row > * { flex: 1; min-width: 0; }
+
+input, select, textarea, button {
+  font: inherit;
+  color: inherit;
+}
+input[type="text"], input[type="search"], select, textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  min-height: 40px;
+}
+textarea { min-height: 60px; resize: vertical; }
+label { display: block; font-size: 0.8rem; color: var(--muted); margin: 10px 0 4px; }
+.checkbox-inline { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; min-height: 40px; }
+.checkbox-inline input { min-height: auto; width: auto; }
+
+#queueList { list-style: none; margin: 0; padding: 0; overflow-y: auto; max-height: 40vh; }
+.queue-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.queue-item:hover { background: var(--accent-bg); }
+.queue-item.active { background: var(--accent-bg); border-left: 4px solid var(--accent); }
+.queue-item-title { font-weight: 600; margin-bottom: 4px; }
+.queue-item-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #eee;
+  color: #444;
+  white-space: nowrap;
+}
+.badge-pending_review { background: #eee; color: #555; }
+.badge-editing { background: #fff2cc; color: #7a5c00; }
+.badge-approved { background: var(--approve-bg); color: var(--approve); }
+.badge-hold { background: var(--warn-bg); color: #8a4a12; }
+.badge-rejected { background: var(--danger-bg); color: var(--danger); }
+.badge-archived { background: #e6e6e6; color: #666; }
+.badge-conflict { background: #fde8e8; color: #a23b3b; }
+.badge-uncertain { background: #eee7fb; color: #5b3fa3; }
+
+#detailPane { padding: 12px; }
+#detailEmpty { color: var(--muted); padding: 24px 8px; text-align: center; }
+
+.detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+.detail-nav { display: flex; align-items: center; gap: 8px; }
+.mobile-only { display: inline-block; }
+
+.detail-title-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+.detail-title-row input { font-size: 1.05rem; font-weight: 600; }
+.detail-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+
+.block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.block h2 { font-size: 0.95rem; margin: 0 0 8px; }
+.block h2 .hint { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+
+.block-raw { background: var(--raw-bg); border-color: var(--raw-border); }
+.raw-box {
+  white-space: pre-wrap;
+  padding: 10px;
+  background: #fffdf7;
+  border: 1px dashed var(--raw-border);
+  border-radius: 6px;
+  min-height: 48px;
+}
+.block-summary { background: var(--summary-bg); }
+
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.checkbox-group label { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: var(--text); margin: 0; }
+.checkbox-group input { min-height: auto; width: auto; }
+
+.btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+
+button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  min-height: 44px;
+}
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.approve { background: var(--approve); color: #fff; border-color: var(--approve); }
+button.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+button.secondary { background: #f1efe9; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.action-bar { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; bottom: 0; background: var(--bg); padding: 10px 0; }
+#saveStatus { font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
+
+#duplicateSuggestions { list-style: none; padding: 0; margin: 0 0 8px; }
+#duplicateSuggestions li { font-size: 0.85rem; padding: 4px 0; }
+
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+}
+/* author stylesheet display:flex above would otherwise override the UA [hidden]{display:none}
+   rule (equal specificity, author wins) and leave the modal visible/click-blocking while
+   "hidden" — found via automated Playwright click failing on a supposedly-hidden modal. */
+.modal[hidden] { display: none; }
+.modal-box { background: var(--surface); border-radius: 12px; padding: 20px; max-width: 420px; width: 100%; }
+.modal-box-wide { max-width: 640px; max-height: 80vh; overflow-y: auto; }
+#historyList { list-style: none; padding: 0; margin: 0; }
+#historyList li { border-bottom: 1px solid var(--border); padding: 8px 0; font-size: 0.85rem; }
+
+/* mobile: queue vs detail toggle, one column at a time */
+#layout.show-detail #queuePane { display: none; }
+#layout:not(.show-detail) #detailPane { display: none; }
+
+/* >= 900px: split view, no toggling, hide back button */
+@media (min-width: 900px) {
+  #layout { flex-direction: row; }
+  #queuePane { flex: 0 0 360px; border-bottom: none; border-right: 1px solid var(--border); max-height: calc(100vh - 52px); }
+  #queueList { max-height: none; flex: 1; }
+  #detailPane { flex: 1; overflow-y: auto; max-height: calc(100vh - 52px); }
+  #layout.show-detail #queuePane,
+  #layout:not(.show-detail) #detailPane { display: flex; }
+  #queuePane { display: flex; }
+  .mobile-only { display: none; }
+  .block-classification, .block-uncertainty { display: grid; }
+}
+
+@media (min-width: 1200px) {
+  #detailPane { padding: 20px 32px; }
+}

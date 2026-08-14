@@ -2,6 +2,75 @@
 
 형식: `날짜 | 변경 항목 | 변경 이유 | 영향 범위 | 출처`
 
+## 2026-08-14 (4차 라운드) — 관리자 검수 시스템 (review-admin) 구현
+
+- `review-admin/` 신규: Phase 1 인벤토리 항목을 사람이 직접 검수·승인하기
+  전까지 어떤 형태로도 공개 노출되지 않도록 하는 관리자 도구. Node/Express +
+  빌드 단계 없는 vanilla JS. `inventory/items/*.md`를 유일한 데이터 소스로
+  사용, 변경 이력은 `inventory/_history/<id>.jsonl`에 append-only 기록 |
+  사유: Phase 2 콘텐츠 작업으로 바로 넘어가지 않고 "AI 초안 → 사람 승인"
+  검수 게이트를 먼저 확보 | 영향 범위: 신규 디렉터리 | 출처: 사용자(강윤) 지시
+- 검수 상태(`review_status`) 6종(pending_review/editing/approved/hold/
+  rejected/archived), `reviewed_by`/`reviewed_at`/`review_note`,
+  `duplicate_of`, `title` 필드를 `docs/INVENTORY_MODEL.md`와
+  `inventory/_templates/item.template.md`에 추가 | 사유: 검수 워크플로를
+  스키마에 정식 반영 | 영향 범위: Phase 1 스키마 | 출처: 사용자(강윤) 지시
+- 공개 API(`/api/public/*`)는 `review_status === 'approved'` 항목만, 내부
+  필드(raw_excerpt/notes/review_note/reviewed_by/uncertainty/conflict/
+  duplicate_of/source)를 제외한 화이트리스트 필드만 반환하도록 코드 레벨에서
+  분리(`src/publicFilter.js`) — UI에서만 숨기는 방식에 의존하지 않음.
+  승인은 `confirm:true` 없이는 거부(`409 APPROVAL_CONFIRMATION_REQUIRED`).
+  `raw_excerpt`는 일반 PATCH로 수정 불가, 별도 엔드포인트에서만 수정되고
+  `raw_edit` 액션으로 이력이 남음 | 영향 범위: 핵심 안전 불변식 |
+  출처: 사용자(강윤) 지시
+- Review Queue + 상세/수정 반응형 프런트엔드(모바일/아이패드/데스크톱),
+  원문(raw_excerpt)과 AI 정리 초안(raw_summary/interpretation)을 시각적으로
+  분리 표시, 이전/다음 탐색, 검색/필터, 중복 가능성 표시(자동 병합 없음,
+  제안만), 변경 이력 모달 | 영향 범위: 신규 UI | 출처: 사용자(강윤) 지시
+- 테스트 34개(`node:test`, 별도 프레임워크 의존성 없음): 데이터 계층
+  라운드트립, 상태 전이/승인 게이트, 공개 필터 격리, 실제 HTTP 서버를 띄운
+  end-to-end 시나리오 포함, 전부 통과 | 영향 범위: `review-admin/test/` |
+  출처: 사용자(강윤) 지시
+- 데모 시드 2건(`review-admin/seed/demo/`): 이번 대화에서 사용자가 직접
+  예로 든 문장만 사용(내용을 지어내지 않음), `npm run seed:demo` 실행 시에만
+  `inventory/items/`에 반영되는 opt-in 스크립트 | 영향 범위: UX 검증용 |
+  출처: 사용자(강윤) 지시
+
+### 자체 검증 중 발견·수정한 문제 (커밋 전)
+
+- `dataStore.createItem`이 `id` 없는 데이터로 빈 frontmatter 파일
+  (`undefined-untitled.md`)을 조용히 생성하던 문제 → 데모 시드의 마크다운
+  주석이 `gray-matter`의 frontmatter 인식을 깨뜨려 실제로 재현됨 → 가드
+  추가(`CREATE_ITEM_MISSING_ID`) 및 회귀 테스트 작성
+- `.modal { display: flex }` CSS가 `[hidden]` 속성을 덮어써 승인 확인
+  모달/이력 모달이 "숨김" 상태에서도 실제로는 화면을 가리고 클릭을
+  막던 문제(Playwright 자동화로 발견) → `.modal[hidden] { display: none; }`
+  추가
+- 저장/승인/원문수정 성공 메시지가 뒤이은 화면 새로고침(`populateForm`)에
+  의해 사용자가 보기도 전에 지워지던 문제 → 메시지 초기화 시점을
+  `selectItem`(다른 항목으로 전환할 때)으로 이동
+- (qa-reviewer subagent 실행 결과) `dataStore.saveItem`이 frontmatter 아래
+  마크다운 본문을 매 저장마다 조용히 삭제하던 데이터 손실 위험 → 기존
+  본문을 읽어 보존하도록 수정, 회귀 테스트 작성
+- (qa-reviewer subagent 실행 결과) `selectItem()`의 비동기 응답 순서
+  역전으로 다른 항목을 빠르게 연속 클릭하면 나중에 도착한 응답이 화면을
+  덮어써 잘못된 항목에 저장될 수 있는 경합 조건 → `state.currentId` 재확인
+  가드 추가
+- (qa-reviewer subagent 실행 결과) `source_level` 배지, 변경 이력의 `actor`
+  값이 이스케이프 없이 `innerHTML`에 삽입되던 저장형 XSS 2건 → `escapeHtml()`
+  적용 + 서버 측에서 `source_level`/`authority_status`/`certainty`/
+  `currentness`/`possible_content_type`/`scope`/`uncertainty`/`conflict`
+  값 형식을 검증(`INVALID_FIELD_VALUE`)하도록 방어 계층 추가, 실제 브라우저
+  (Playwright)로 재검증
+- (qa-reviewer subagent 실행 결과) `raw-excerpt` PATCH에 필수값 검증이
+  없어 값 누락 시 500과 함께 내부 라이브러리 에러 메시지가 노출되던 문제 →
+  400 `INVALID_RAW_EXCERPT`로 정리
+
+수정 후 테스트 29개 → 34개로 확장, 전부 통과 재확인. 데모 시드로 실제
+서버를 띄워 curl + Playwright로 전체 워크플로(승인 게이트/공개 필터/원문
+보호/상태 전이/이력/반응형 UI)를 직접 실행해 검증한 뒤, 생성된 파일은
+모두 삭제해 `inventory/items/`를 다시 빈 상태로 되돌림.
+
 ## 2026-08-14
 
 - CLAUDE.md 전면 재작성 (프로젝트 헌법: 역할, 목적, Phase 범위, 출처 정책,

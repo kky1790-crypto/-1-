@@ -74,6 +74,8 @@ Phase 1은 한 번에 끝내지 않고 세 단계로 나눠서 진행한다. 같
 ```yaml
 id: INV-0001
 
+title: 고객 앞에서의 기술 질문   # 검수 큐에서 한눈에 보는 짧은 라벨. topics와 별개, 사람이 자유롭게 수정 가능
+
 # 1A. Raw Capture -----------------------------------------------------
 topics:                       # 리스트. 하나의 원자료가 여러 주제를 다룰 수 있음
   - 고객 앞에서의 기술 질문
@@ -124,6 +126,13 @@ conflict:
     질문 자체를 막으면 학습 기회를 제한할 수 있다는 의견도 존재.
     (어느 쪽이 맞는지 판단하지 않는다 — 두 가치가 부딪히는 지점만 서술)
 
+# 검수 워크플로 (review-admin) --------------------------------------------
+review_status: pending_review    # pending_review | editing | approved | hold | rejected | archived
+reviewed_by: null
+reviewed_at: null
+review_note: ""
+duplicate_of: []                 # 시스템이 제안한 중복 가능 item id. 자동 병합 안 함, 관리자 판단 대상
+
 # Phase 2 승격 여부 -------------------------------------------------------
 official_rule:
   status: not_confirmed          # not_confirmed | confirmed
@@ -137,6 +146,7 @@ notes: ""
 | 필드 | 설명 |
 |---|---|
 | `id` | 고유 식별자 (`INV-0001`처럼 순번). 재사용하지 않는다 |
+| `title` | 검수 큐에서 한눈에 보는 짧은 라벨. `topics`(다중 주제 태그)와 별개이며 자유롭게 수정 가능 |
 | `topics` | 이 원자료가 다루는 주제들 (리스트, 1개 이상). 하나만 있다고 임의로 단일화하지 않는다 |
 | `source.speaker/date/context` | 원자료의 출처 메타. 모르면 `unknown` — 추측해서 채우지 않는다 |
 | `raw_excerpt` | 실제 발화 원문. 확보되면 최우선으로 기록 |
@@ -150,8 +160,36 @@ notes: ""
 | `currentness` | 지금도 유효한 것으로 보이는가, 과거 것인가, 모르는가 |
 | `uncertainty` | 화자/날짜/맥락/의미 중 무엇이 불확실한지 개별적으로 표시 |
 | `conflict` | 이 항목과 긴장 관계에 있는 다른 항목들 (옳고 그름이 아니라 연결) |
+| `review_status` | **사람의 검수 진행 상태.** 아래 "검수 워크플로" 참고 |
+| `reviewed_by` / `reviewed_at` / `review_note` | 누가/언제/어떤 메모와 함께 검수했는가 |
+| `duplicate_of` | 시스템이 "중복 가능성 있음"으로 제안한 다른 item id. 관리자가 확인하기 전엔 자동 병합하지 않는다 |
 | `official_rule` | Phase 2로 승격되어 확정 콘텐츠가 됐는지 여부와 경로 |
 | `notes` | 위 필드로 표현 안 되는 것 (자유 서술) |
+
+## 검수 워크플로 (Review Workflow)
+
+`review-admin/`(관리자 검수 도구)이 다루는 상태다. **모든 인벤토리 항목은
+생성 시 `review_status: pending_review`로 시작한다.** AI가 만든 초안이
+사용자의 확인 없이 자동으로 `approved`가 되는 경로는 존재하지 않는다.
+
+| 값 | 의미 |
+|---|---|
+| `pending_review` | 아직 검수 전 (초기 상태) |
+| `editing` | 관리자가 검토/수정 중이나 아직 승인/보류/반려를 결정하지 않음 |
+| `approved` | **사람이 직접 확인하고 승인함.** 공개 미리보기(`review-admin`의 공개 API)에 노출 가능한 유일한 상태 |
+| `hold` | 검토는 했으나 결정을 보류함 (추가 정보/논의 필요) |
+| `rejected` | 검토 후 채택하지 않기로 함. **원자료 자체는 삭제하지 않는다** |
+| `archived` | 더 이상 활성 대상은 아니지만 기록으로 보존 |
+
+`review_status: approved`가 **아닌** 항목은 어떤 경우에도 공개 화면에
+노출되지 않는다 — 이 필터는 UI에서만 숨기는 방식이 아니라 코드(데이터
+계층)에서 분리한다 (`review-admin/src/publicFilter.js`).
+
+`review_status`(사람이 이 항목을 검수했는가)와 `official_rule.status`
+(Phase 2 `content/`로 실제 승격됐는가)는 **다른 축**이다. `approved`는
+"이 인벤토리 항목의 내용을 사람이 확인했다"는 뜻이고, `official_rule.status:
+confirmed`는 "그 내용이 실제로 정식 콘텐츠로 옮겨졌다"는 뜻이다. `approved`
+항목이라도 아직 `content/`로 승격되지 않았을 수 있다.
 
 ### `scope` — 확장 가능한 enum
 

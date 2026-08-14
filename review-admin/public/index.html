@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>해피니언 마곡점 · 검수 큐</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header id="topbar">
+  <h1>해피니언 마곡점 · 검수 큐</h1>
+  <div id="stats" aria-live="polite"></div>
+</header>
+
+<div id="layout">
+  <aside id="queuePane">
+    <div id="filters">
+      <input id="searchInput" type="search" placeholder="검색 (제목/원문/요약/화자/주제/메모)" />
+      <div class="filter-row">
+        <select id="filterStatus">
+          <option value="">전체 상태</option>
+          <option value="pending_review">미검수</option>
+          <option value="editing">검토중</option>
+          <option value="approved">승인</option>
+          <option value="hold">보류</option>
+          <option value="rejected">반려</option>
+          <option value="archived">보관</option>
+        </select>
+        <select id="filterSourceLevel">
+          <option value="">전체 출처</option>
+          <option value="H1">H1</option>
+          <option value="H2">H2</option>
+          <option value="G1">G1</option>
+          <option value="M1">M1</option>
+          <option value="K1">K1</option>
+          <option value="CASE">CASE</option>
+          <option value="IDEA">IDEA</option>
+          <option value="unknown">unknown</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <input id="filterTopic" type="text" placeholder="주제 필터" />
+        <label class="checkbox-inline"><input type="checkbox" id="filterConflict" /> 충돌 있음</label>
+        <label class="checkbox-inline"><input type="checkbox" id="filterUncertainty" /> 불확실성 있음</label>
+      </div>
+    </div>
+    <ul id="queueList"></ul>
+  </aside>
+
+  <main id="detailPane">
+    <div id="detailEmpty">왼쪽 목록에서 항목을 선택하세요.</div>
+
+    <div id="detailContent" hidden>
+      <div class="detail-header">
+        <button id="btnBack" class="mobile-only" type="button">← 목록</button>
+        <div class="detail-nav">
+          <button id="btnPrev" type="button">◀ 이전</button>
+          <span id="detailPosition"></span>
+          <button id="btnNext" type="button">다음 ▶</button>
+        </div>
+      </div>
+
+      <div class="detail-title-row">
+        <input id="fieldTitle" type="text" placeholder="제목" />
+        <span id="statusBadge" class="badge"></span>
+      </div>
+      <div class="detail-meta" id="detailMeta"></div>
+
+      <section class="block block-raw">
+        <h2>원문 (raw_excerpt) <span class="hint">— 실수 방지를 위해 기본적으로 잠김</span></h2>
+        <div id="rawExcerptView" class="raw-box"></div>
+        <button id="btnRawEditToggle" type="button" class="secondary">원문 수정 모드</button>
+        <div id="rawEditArea" hidden>
+          <textarea id="rawExcerptInput" rows="4"></textarea>
+          <input id="rawEditNote" type="text" placeholder="수정 사유(선택)" />
+          <div class="btn-row">
+            <button id="btnRawSave" type="button" class="primary">원문 저장</button>
+            <button id="btnRawCancel" type="button" class="secondary">취소</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-summary">
+        <h2>AI 정리 초안 <span class="hint">— 원문과 시각적으로 분리됨</span></h2>
+        <label for="fieldRawSummary">raw_summary (원문에 충실한 요약)</label>
+        <textarea id="fieldRawSummary" rows="3"></textarea>
+        <label for="fieldInterpretation">interpretation (해석 — Phase 1 원자료는 보통 비어 있음)</label>
+        <textarea id="fieldInterpretation" rows="3" placeholder="null (아직 해석 없음)"></textarea>
+      </section>
+
+      <section class="block block-classification">
+        <h2>분류 <span class="hint">— AI 가설, 사람이 확정</span></h2>
+        <label for="fieldTopics">topics (쉼표로 구분)</label>
+        <input id="fieldTopics" type="text" />
+
+        <label for="fieldSourceLevel">source_level (누가 말했는가)</label>
+        <select id="fieldSourceLevel">
+          <option value="unknown">unknown</option>
+          <option value="H1">H1</option>
+          <option value="H2">H2</option>
+          <option value="G1">G1</option>
+          <option value="M1">M1</option>
+          <option value="K1">K1</option>
+          <option value="CASE">CASE</option>
+          <option value="IDEA">IDEA</option>
+        </select>
+
+        <label>possible_content_type (그 말의 성격 — 복수 가능)</label>
+        <div id="fieldContentType" class="checkbox-group"></div>
+
+        <label>scope (누구에게 적용되는가 — 복수 가능)</label>
+        <div id="fieldScope" class="checkbox-group"></div>
+
+        <label for="fieldAuthorityStatus">authority_status (지금 실제 권위 — 별도 검수 대상)</label>
+        <select id="fieldAuthorityStatus">
+          <option value="unknown">unknown</option>
+          <option value="official">official</option>
+          <option value="adopted">adopted</option>
+          <option value="local_practice">local_practice</option>
+          <option value="proposed">proposed</option>
+          <option value="discussed">discussed</option>
+          <option value="personal_view">personal_view</option>
+        </select>
+
+        <div class="filter-row">
+          <div>
+            <label for="fieldCertainty">certainty</label>
+            <select id="fieldCertainty">
+              <option value="explicit">explicit</option>
+              <option value="inferred">inferred</option>
+              <option value="unclear">unclear</option>
+            </select>
+          </div>
+          <div>
+            <label for="fieldCurrentness">currentness</label>
+            <select id="fieldCurrentness">
+              <option value="current">current</option>
+              <option value="historical">historical</option>
+              <option value="unknown">unknown</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-uncertainty">
+        <h2>불확실성</h2>
+        <div class="filter-row">
+          <div><label>화자</label>
+            <select id="uncSpeaker"><option value="known">known</option><option value="unknown">unknown</option></select>
+          </div>
+          <div><label>날짜</label>
+            <select id="uncDate"><option value="known">known</option><option value="unknown">unknown</option></select>
+          </div>
+        </div>
+        <div class="filter-row">
+          <div><label>맥락</label>
+            <select id="uncContext"><option value="known">known</option><option value="unknown">unknown</option></select>
+          </div>
+          <div><label>의미</label>
+            <select id="uncMeaning"><option value="clear">clear</option><option value="unclear">unclear</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-conflict">
+        <h2>충돌(긴장) 정보 <span class="hint">— 누가 맞는지 판단 아님, 연결만</span></h2>
+        <label class="checkbox-inline"><input type="checkbox" id="conflictExists" /> 긴장 관계가 존재함</label>
+        <label for="conflictRelated">related_items (쉼표로 구분된 id)</label>
+        <input id="conflictRelated" type="text" />
+        <label for="conflictTension">tension (어떤 가치와 어떤 가치가 부딪히는가)</label>
+        <textarea id="conflictTension" rows="2"></textarea>
+      </section>
+
+      <section class="block block-duplicates">
+        <h2>중복 가능성 <span class="hint">— 자동 병합 없음, 표시만</span></h2>
+        <ul id="duplicateSuggestions"></ul>
+        <label for="fieldDuplicateOf">duplicate_of (관리자가 확인한 중복 id, 쉼표 구분)</label>
+        <input id="fieldDuplicateOf" type="text" />
+      </section>
+
+      <section class="block block-notes">
+        <h2>기타 메모</h2>
+        <textarea id="fieldNotes" rows="2"></textarea>
+      </section>
+
+      <section class="block block-review">
+        <h2>검수</h2>
+        <label for="fieldActor">검수자 이름</label>
+        <input id="fieldActor" type="text" placeholder="예: 강윤" />
+        <label for="fieldReviewNote">검수 메모</label>
+        <textarea id="fieldReviewNote" rows="2"></textarea>
+      </section>
+
+      <div class="action-bar">
+        <button id="btnSave" type="button" class="primary">수정 저장</button>
+        <button id="btnApprove" type="button" class="approve">승인</button>
+        <button id="btnUnapprove" type="button" class="secondary" hidden>승인 취소</button>
+        <button id="btnHold" type="button" class="secondary">보류</button>
+        <button id="btnReject" type="button" class="danger">반려</button>
+        <button id="btnArchive" type="button" class="secondary">보관</button>
+        <button id="btnHistory" type="button" class="secondary">변경 이력</button>
+      </div>
+      <div id="saveStatus" aria-live="polite"></div>
+    </div>
+  </main>
+</div>
+
+<div id="confirmModal" class="modal" hidden>
+  <div class="modal-box">
+    <p>이 콘텐츠를 식구들에게 공개 가능한 <strong>승인</strong> 상태로 변경하시겠습니까?</p>
+    <div class="btn-row">
+      <button id="confirmYes" type="button" class="approve">승인 확정</button>
+      <button id="confirmNo" type="button" class="secondary">취소</button>
+    </div>
+  </div>
+</div>
+
+<div id="historyModal" class="modal" hidden>
+  <div class="modal-box modal-box-wide">
+    <h2>변경 이력</h2>
+    <ul id="historyList"></ul>
+    <div class="btn-row">
+      <button id="historyClose" type="button" class="secondary">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
