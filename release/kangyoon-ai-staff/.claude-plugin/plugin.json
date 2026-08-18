@@ -1,0 +1,10 @@
+{
+  "name": "kangyoon-ai-staff",
+  "displayName": "강윤 AI 참모실",
+  "version": "0.1.0",
+  "description": "조사·전략·반론·콘텐츠 작성·근거 검수를 거쳐 비서실장이 최종 결과를 보고하는 AI 직원 조직",
+  "author": {
+    "name": "강윤"
+  },
+  "defaultEnabled": true
+}
