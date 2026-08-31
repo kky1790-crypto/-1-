@@ -1,0 +1,210 @@
+---
+import { NAV, BRAND, withBase } from '@/data/site';
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a href={withBase('/')} class="wordmark">
+      <span class="wordmark-name">강윤</span>
+      <span class="wordmark-sep" aria-hidden="true">|</span>
+      <span class="wordmark-shop">{BRAND.wordmark}</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="주요 메뉴">
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <button
+      id="menu-toggle"
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span class="visually-hidden">메뉴 열기</span>
+      <span class="menu-icon" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </button>
+  </div>
+
+  <div id="mobile-nav" class="mobile-nav" hidden>
+    <nav aria-label="모바일 메뉴">
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const panel = document.getElementById('mobile-nav');
+
+  if (toggle && panel) {
+    const close = () => {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+    const open = () => {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      expanded ? close() : open();
+    });
+
+    panel.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', close);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        close();
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--color-charcoal);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .wordmark-name {
+    font-size: 1.05rem;
+  }
+
+  .wordmark-sep {
+    color: var(--color-line-strong);
+    font-weight: 400;
+  }
+
+  .wordmark-shop {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--color-charcoal-soft);
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .desktop-nav ul {
+    display: flex;
+    gap: clamp(16px, 2.2vw, 32px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .desktop-nav a {
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    padding-block: 6px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+
+  .desktop-nav a:hover {
+    border-color: var(--color-red);
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .menu-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 22px;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2px;
+    background: var(--color-charcoal);
+  }
+
+  .mobile-nav {
+    display: none;
+    border-top: 1px solid var(--color-line);
+    background: var(--color-white);
+  }
+
+  .mobile-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 8px var(--gutter) 20px;
+  }
+
+  .mobile-nav a {
+    display: block;
+    padding: 14px 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-charcoal);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  @media (max-width: 860px) {
+    .desktop-nav {
+      display: none;
+    }
+    .menu-toggle {
+      display: inline-flex;
+    }
+    .mobile-nav:not([hidden]) {
+      display: block;
+    }
+    .wordmark-shop {
+      max-width: 34vw;
+    }
+  }
+</style>

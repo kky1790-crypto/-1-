@@ -1,0 +1,174 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import { guides, type Guide } from '@/data/guides';
+import { getWorkBySlug } from '@/data/works';
+import { CONTACT, CTA, withBase } from '@/data/site';
+import { breadcrumbSchema, articleSchema, withContext } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return guides.map((guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }));
+}
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+const path = `/guide/${guide.slug}/`;
+const relatedWorks = guide.relatedWorkSlugs
+  .map((slug) => getWorkBySlug(slug))
+  .filter((w): w is NonNullable<typeof w> => Boolean(w));
+
+const jsonLd = withContext([
+  articleSchema({
+    headline: guide.title,
+    description: guide.description,
+    path,
+    datePublished: guide.publishedDate,
+    dateModified: guide.updatedDate,
+    authorName: guide.author,
+  }),
+  breadcrumbSchema([
+    { name: '홈', path: '/' },
+    { name: '가이드', path: '/guide/' },
+    { name: guide.title, path },
+  ]),
+]);
+---
+
+<BaseLayout
+  title={`${guide.title} | Happynian Magok 가이드`}
+  description={guide.description}
+  path={path}
+  jsonLd={jsonLd}
+>
+  <article class="guide-article">
+    <div class="container narrow">
+      <Breadcrumb
+        items={[
+          { name: '홈', path: '/' },
+          { name: '가이드', path: '/guide/' },
+          { name: guide.title },
+        ]}
+      />
+
+      <p class="eyebrow"><span class="num">06</span> GUIDE</p>
+      <h1>{guide.title}</h1>
+      <p class="byline">
+        {guide.author} · 작성일 {guide.publishedDate}
+        {guide.updatedDate !== guide.publishedDate && <> · 수정일 {guide.updatedDate}</>}
+      </p>
+
+      <div class="guide-body">
+        {
+          guide.sections.map((section) => (
+            <section>
+              {section.heading && <h2>{section.heading}</h2>}
+              {section.paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </section>
+          ))
+        }
+      </div>
+
+      {
+        relatedWorks.length > 0 && (
+          <div class="related-works">
+            <h2>관련 작업</h2>
+            <ul>
+              {relatedWorks.map((work) => (
+                <li>
+                  <a href={withBase(`/work/${work.slug}/`)}>{work.styleName}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <div class="guide-cta">
+        <a
+          class="btn btn-primary"
+          href={CONTACT.naverBookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {CTA.primary}
+        </a>
+        <p class="cta-sub">{CONTACT.naverSelectNote}</p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .guide-article {
+    padding-block: 40px 96px;
+  }
+
+  .narrow {
+    max-width: 760px;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem);
+    line-height: 1.4;
+    margin: 0 0 14px;
+  }
+
+  .byline {
+    font-size: 0.85rem;
+    color: var(--color-charcoal-soft);
+    margin: 0 0 40px;
+  }
+
+  .guide-body section {
+    margin-bottom: 30px;
+  }
+
+  .guide-body h2 {
+    font-size: 1.15rem;
+    margin: 0 0 14px;
+  }
+
+  .guide-body p {
+    line-height: 1.9;
+    margin: 0 0 16px;
+    color: var(--color-charcoal-soft);
+  }
+
+  .related-works {
+    border-top: 1px solid var(--color-line-strong);
+    padding-top: 28px;
+    margin-bottom: 40px;
+  }
+
+  .related-works h2 {
+    font-size: 1rem;
+    margin: 0 0 12px;
+  }
+
+  .related-works ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .related-works a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+  }
+
+  .guide-cta {
+    padding-top: 8px;
+  }
+</style>

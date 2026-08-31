@@ -1,0 +1,95 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import { guides } from '@/data/guides';
+import { withBase } from '@/data/site';
+import { breadcrumbSchema, withContext } from '@/lib/schema';
+
+const path = '/guide/';
+const jsonLd = withContext([
+  breadcrumbSchema([
+    { name: '홈', path: '/' },
+    { name: '가이드', path },
+  ]),
+]);
+---
+
+<BaseLayout
+  title="가이드 | 마곡 남자머리 상담 전 알아두면 좋은 글 | Happynian Magok"
+  description="마곡 남자머리 스타일 선택, 텍스쳐컷·펌 비교, 블론드 탈색 전 확인할 점을 정리한 강윤 디자이너의 가이드입니다."
+  path={path}
+  jsonLd={jsonLd}
+>
+  <div class="container guide-index">
+    <Breadcrumb items={[{ name: '홈', path: '/' }, { name: '가이드' }]} />
+    <p class="eyebrow"><span class="num">06</span> GUIDE</p>
+    <h1 class="section-title">알아두면 좋은 글</h1>
+    <p class="section-lede">상담 전에 읽어두면 도움이 되는 글입니다.</p>
+
+    <ul class="guide-list">
+      {
+        guides.map((guide) => (
+          <li>
+            <a href={withBase(`/guide/${guide.slug}/`)}>
+              <h2>{guide.title}</h2>
+              <p>{guide.description}</p>
+              <span class="meta">
+                {guide.author} · {guide.publishedDate}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .guide-index {
+    padding-block: 40px 96px;
+  }
+
+  .guide-list {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guide-list li {
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .guide-list li:last-child {
+    border-bottom: 1px solid var(--color-line-strong);
+  }
+
+  .guide-list a {
+    display: block;
+    padding: 28px 4px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .guide-list h2 {
+    font-size: 1.15rem;
+    margin: 0 0 10px;
+  }
+
+  .guide-list p {
+    margin: 0 0 12px;
+    color: var(--color-charcoal-soft);
+    max-width: 62ch;
+    line-height: 1.7;
+  }
+
+  .guide-list .meta {
+    font-size: 0.8rem;
+    color: var(--color-steel);
+  }
+
+  .guide-list a:hover h2 {
+    color: var(--color-red);
+  }
+</style>

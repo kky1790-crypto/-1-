@@ -1,0 +1,33 @@
+---
+import { withBase } from '@/data/site';
+
+export interface CrumbItem {
+  name: string;
+  path?: string;
+}
+
+interface Props {
+  items: CrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="현재 위치">
+  {
+    items.map((item, index) => (
+      <span>
+        {item.path ? (
+          <a href={withBase(item.path)}>{item.name}</a>
+        ) : (
+          <span aria-current="page">{item.name}</span>
+        )}
+        {index < items.length - 1 && (
+          <span class="sep" aria-hidden="true">
+            /
+          </span>
+        )}
+      </span>
+    ))
+  }
+</nav>

@@ -1,0 +1,707 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BRAND, CONTACT, CTA, withBase } from '@/data/site';
+import { works, workImageStyle } from '@/data/works';
+import { concerns, consultationFactors, consultationIntro } from '@/data/consultation';
+import { pricedServices, customQuoteServices, discountConditionNote, formatKrw } from '@/data/services';
+import { primaryDesigner } from '@/data/designers';
+import { guides } from '@/data/guides';
+import { personSchema, hairSalonSchema, absoluteUrl, absoluteBasePath, withContext } from '@/lib/schema';
+
+const heroWork = works[0]; // 애쉬베이지 브라운 · 텍스쳐컷 — first screen per spec
+
+const person = personSchema(true);
+const schemaOgImage = await getImage({
+  src: heroWork.heroImage.src,
+  width: 1200,
+  height: 630,
+  format: 'jpg',
+});
+const jsonLd = withContext([
+  person,
+  hairSalonSchema(absoluteUrl(schemaOgImage.src)),
+  {
+    '@type': 'WebSite',
+    url: absoluteBasePath('/'),
+    name: BRAND.shopName,
+    inLanguage: 'ko',
+  },
+]);
+---
+
+<BaseLayout
+  title="강윤 디자이너 | 마곡 남자머리·텍스쳐컷·남자펌 | Happynian Magok"
+  description="서울 강서구 마곡에서 남성 텍스쳐컷, 히피펌, 쉐도우펌, 탈색·컬러를 디자인하는 강윤 디자이너. 얼굴형·두상·모질과 손질 습관을 보고 어울리는 스타일을 제안합니다."
+  path="/"
+  ogImage={heroWork.heroImage.src}
+  jsonLd={jsonLd}
+>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="hero-brandline">{BRAND.displayName}</p>
+        <h1 id="hero-title">머리를 정하지 못해도 괜찮습니다.</h1>
+        <p class="hero-body">
+          얼굴형과 모질, 직업, 평소 손질 습관을 함께 보고 손질은 편하면서도 당신다운 텍스쳐를
+          제안합니다.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn btn-primary"
+            href={CONTACT.naverBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {CTA.primary}
+          </a>
+          <p class="cta-sub">{CTA.primarySub}</p>
+          <a class="btn btn-outline" href="#work">{CTA.secondary}</a>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <figure class="hero-media-main">
+          <Picture
+            src={heroWork.heroImage.src}
+            alt={heroWork.heroImage.alt}
+            widths={[480, 768, 1000]}
+            sizes="(max-width: 860px) 92vw, 42vw"
+            formats={['avif', 'webp']}
+            fallbackFormat="jpeg"
+            loading="eager"
+            fetchpriority="high"
+            style={workImageStyle(heroWork.heroImage)}
+          />
+          <figcaption>
+            <span class="cap-num">01</span>
+            <span>{heroWork.styleName}</span>
+          </figcaption>
+        </figure>
+        <figure class="hero-media-sub">
+          <Picture
+            src={heroWork.secondaryImage!.src}
+            alt={heroWork.secondaryImage!.alt}
+            widths={[280, 420]}
+            sizes="(max-width: 860px) 46vw, 18vw"
+            formats={['avif', 'webp']}
+            fallbackFormat="jpeg"
+            loading="eager"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- SELECTED WORK -->
+  <section id="work" class="bg-white" aria-labelledby="work-title">
+    <div class="container">
+      <p class="eyebrow"><span class="num">02</span> SELECTED WORK</p>
+      <h2 id="work-title" class="section-title">강윤의 작업</h2>
+      <p class="section-lede">
+        실제로 진행한 네 가지 작업입니다. 각 작업 페이지에서 스타일의 특징과 상담 시 참고할 점을
+        더 자세히 볼 수 있습니다.
+      </p>
+
+      <div class="work-grid">
+        {
+          works.map((work, index) => (
+            <a class="work-card enter" class:list={[index === 0 && 'work-card-lead']} href={withBase(`/work/${work.slug}/`)}>
+              <div class="work-card-media">
+                <Picture
+                  src={work.heroImage.src}
+                  alt={work.heroImage.alt}
+                  widths={index === 0 ? [480, 768, 1100] : [320, 560]}
+                  sizes={index === 0 ? '(max-width: 860px) 92vw, 58vw' : '(max-width: 860px) 44vw, 20vw'}
+                  formats={['avif', 'webp']}
+                  fallbackFormat="jpeg"
+                  loading="lazy"
+                  style={workImageStyle(work.heroImage)}
+                />
+              </div>
+              <div class="work-card-caption">
+                <span class="cap-num">{work.number}</span>
+                <span class="work-card-name">{work.shortLabel}</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTATION -->
+  <section id="consultation" class="bg-ivory" aria-labelledby="consultation-title">
+    <div class="container consultation-grid">
+      <div>
+        <p class="eyebrow"><span class="num">03</span> CONSULTATION</p>
+        <h2 id="consultation-title" class="section-title">이런 고민, 상담에서 자주 나눕니다.</h2>
+        <ul class="concern-list">
+          {
+            concerns.map((concern) => (
+              <li>{concern.text}</li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="consultation-method">
+        <h3>상담에서 함께 보는 것들</h3>
+        <ul class="tag-list">
+          {consultationFactors.map((factor) => <li class="tag">{factor}</li>)}
+        </ul>
+        <p class="consultation-intro">{consultationIntro}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="bg-white" aria-labelledby="services-title">
+    <div class="container">
+      <p class="eyebrow"><span class="num">04</span> SERVICES</p>
+      <h2 id="services-title" class="section-title">시술 안내</h2>
+
+      <div class="price-table">
+        {
+          pricedServices.map((service) => (
+            <div class="price-row">
+              <p class="price-name">{service.name}</p>
+              <div class="price-figures">
+                <span class="price-regular">{formatKrw(service.regularPrice)}</span>
+                <span class="price-first">
+                  {service.discountLabel} <strong>{formatKrw(service.firstVisitPrice)}</strong>
+                </span>
+              </div>
+            </div>
+          ))
+        }
+        {
+          customQuoteServices.map((service) => (
+            <div class="price-row">
+              <p class="price-name">{service.name}</p>
+              <div class="price-figures">
+                <span class="price-quote">{service.note}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="price-note">{discountConditionNote}</p>
+    </div>
+  </section>
+
+  <!-- ABOUT KANGYOON -->
+  <section id="about" class="bg-charcoal" aria-labelledby="about-title">
+    <div class="container about-grid">
+      <div class="about-photo">
+        <Picture
+          src={primaryDesigner.profileImage}
+          alt={primaryDesigner.profileImageAlt}
+          width={220}
+          height={220}
+          formats={['avif', 'webp']}
+          fallbackFormat="jpeg"
+          loading="lazy"
+        />
+      </div>
+      <div class="about-copy">
+        <p class="eyebrow on-dark"><span class="num">05</span> ABOUT KANGYOON</p>
+        <h2 id="about-title" class="section-title">{primaryDesigner.introTitle}</h2>
+        {primaryDesigner.introParagraphs.map((paragraph) => <p class="about-paragraph">{paragraph}</p>)}
+        <p class="years-badge">{primaryDesigner.yearsLabel}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section id="guide" class="bg-ivory" aria-labelledby="guide-title">
+    <div class="container">
+      <p class="eyebrow"><span class="num">06</span> GUIDE</p>
+      <h2 id="guide-title" class="section-title">알아두면 좋은 글</h2>
+      <p class="section-lede">상담 전에 읽어두면 도움이 되는 세 편의 글입니다.</p>
+
+      <div class="guide-grid">
+        {
+          guides.map((guide) => (
+            <a class="guide-card enter" href={withBase(`/guide/${guide.slug}/`)}>
+              <h3>{guide.title}</h3>
+              <p>{guide.description}</p>
+              <span class="guide-read-more">읽어보기 →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <section id="visit" class="bg-white" aria-labelledby="visit-title">
+    <div class="container visit-grid">
+      <div>
+        <p class="eyebrow"><span class="num">07</span> VISIT</p>
+        <h2 id="visit-title" class="section-title">방문 안내</h2>
+        <dl class="visit-list">
+          <div>
+            <dt>주소</dt>
+            <dd>{CONTACT.address}</dd>
+          </div>
+          <div>
+            <dt>교통</dt>
+            <dd>{CONTACT.transit}</dd>
+          </div>
+          <div>
+            <dt>주차</dt>
+            <dd>{CONTACT.parking}</dd>
+          </div>
+          <div>
+            <dt>영업시간</dt>
+            <dd>{CONTACT.hoursNote}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="visit-actions">
+        <a
+          class="btn btn-primary btn-block"
+          href={CONTACT.naverBookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {CTA.primary}
+        </a>
+        <p class="cta-sub">{CONTACT.naverSelectNote}</p>
+        <a
+          class="btn btn-outline btn-block"
+          href={CONTACT.naverMapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          네이버 지도에서 보기
+        </a>
+        <a
+          class="btn btn-outline btn-block"
+          href={CONTACT.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: clamp(32px, 5vw, 64px);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-brandline {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-charcoal-soft);
+    margin: 0 0 18px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.1rem, 1.5rem + 3vw, 3.6rem);
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    margin: 0 0 22px;
+  }
+
+  .hero-body {
+    font-size: 1.08rem;
+    line-height: 1.85;
+    color: var(--color-charcoal-soft);
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .hero-actions .btn-outline {
+    margin-top: 18px;
+  }
+
+  .hero-media {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    order: -1;
+  }
+
+  .hero-copy {
+    order: 0;
+  }
+
+  .hero-media-main {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-ivory-deep);
+    position: relative;
+  }
+
+  .hero-media-main :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-media-main figcaption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(28, 26, 24, 0.72);
+    color: var(--color-ivory);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+  }
+
+  .cap-num {
+    color: var(--color-red);
+    font-weight: 700;
+  }
+
+  .hero-media-sub {
+    margin: -48px 0 0 auto;
+    width: 46%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border: 6px solid var(--color-white);
+    box-shadow: 0 8px 28px rgba(28, 26, 24, 0.18);
+  }
+
+  .hero-media-sub :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 0.85fr 1.15fr;
+      align-items: center;
+    }
+    .hero-copy {
+      order: 1;
+    }
+    .hero-media {
+      order: 2;
+    }
+  }
+
+  /* SELECTED WORK */
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .work-card {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .work-card-media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-ivory-deep);
+  }
+
+  .work-card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .work-card:hover .work-card-media :global(img) {
+    transform: scale(1.03);
+  }
+
+  .work-card-caption {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 12px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 640px) {
+    .work-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .work-card-lead {
+      grid-column: 1 / -1;
+    }
+    .work-card-lead .work-card-media {
+      aspect-ratio: 16 / 10;
+    }
+
+    /* This lead card's wide crop needs to favor the hair at the top of the
+       source photo rather than the centered default used elsewhere — the
+       !important is required to win over the per-photo inline object-position. */
+    .work-card-lead .work-card-media :global(img) {
+      object-position: center 8% !important;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .work-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* CONSULTATION */
+  .consultation-grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr;
+  }
+
+  .concern-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .concern-list li {
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--color-line-strong);
+  }
+
+  .consultation-method h3 {
+    font-size: 1rem;
+    margin: 0 0 16px;
+  }
+
+  .consultation-intro {
+    margin-top: 20px;
+    color: var(--color-charcoal-soft);
+    line-height: 1.85;
+  }
+
+  @media (min-width: 860px) {
+    .consultation-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  /* SERVICES */
+  .price-table {
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .price-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .price-name {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.02rem;
+  }
+
+  .price-figures {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .price-regular {
+    color: var(--color-charcoal-soft);
+    text-decoration: line-through;
+    font-size: 0.92rem;
+  }
+
+  .price-first {
+    font-size: 0.92rem;
+  }
+
+  .price-first strong {
+    color: var(--color-red);
+    font-size: 1.1rem;
+  }
+
+  .price-quote {
+    color: var(--color-charcoal-soft);
+  }
+
+  .price-note {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--color-charcoal-soft);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .about-photo :global(img) {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(246, 241, 232, 0.3);
+  }
+
+  .about-paragraph {
+    color: rgba(246, 241, 232, 0.86);
+    line-height: 1.9;
+    max-width: 62ch;
+  }
+
+  .years-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-red-on-dark);
+  }
+
+  :global(.eyebrow.on-dark) {
+    color: var(--color-steel-soft);
+  }
+
+  :global(.eyebrow.on-dark .num) {
+    color: var(--color-red-on-dark);
+  }
+
+  :global(.eyebrow.on-dark)::after {
+    background: rgba(246, 241, 232, 0.25);
+  }
+
+  @media (min-width: 700px) {
+    .about-grid {
+      grid-template-columns: auto 1fr;
+    }
+  }
+
+  /* GUIDE */
+  .guide-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .guide-card {
+    display: block;
+    padding: 24px;
+    background: var(--color-white);
+    border: 1px solid var(--color-line-strong);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .guide-card:hover {
+    border-color: var(--color-red);
+  }
+
+  .guide-card h3 {
+    font-size: 1.08rem;
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+
+  .guide-card p {
+    color: var(--color-charcoal-soft);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    margin: 0 0 16px;
+  }
+
+  .guide-read-more {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-red);
+  }
+
+  @media (min-width: 860px) {
+    .guide-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* VISIT */
+  .visit-grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr;
+  }
+
+  .visit-list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .visit-list dt {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-steel);
+    text-transform: uppercase;
+  }
+
+  .visit-list dd {
+    margin: 4px 0 0;
+    font-size: 1.02rem;
+  }
+
+  .visit-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-self: start;
+  }
+
+  .visit-actions .btn-outline {
+    margin-top: 6px;
+  }
+
+  @media (min-width: 860px) {
+    .visit-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+  }
+</style>

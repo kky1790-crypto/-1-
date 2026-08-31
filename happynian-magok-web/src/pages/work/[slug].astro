@@ -1,0 +1,200 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import { works, hairResultDisclaimer, workImageStyle, type Work } from '@/data/works';
+import { concerns } from '@/data/consultation';
+import { CONTACT, CTA } from '@/data/site';
+import { breadcrumbSchema, withContext } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return works.map((work) => ({
+    params: { slug: work.slug },
+    props: { work },
+  }));
+}
+
+interface Props {
+  work: Work;
+}
+
+const { work } = Astro.props;
+
+const matchedConcerns = concerns.filter((c) => work.relevantConcerns.includes(c.id));
+
+const path = `/work/${work.slug}/`;
+const title = `${work.styleName} | 강윤 디자이너 작업 | Happynian Magok`;
+const description = `${work.styleName} — ${work.observedFeatures[0]}. 강윤 디자이너의 작업 사진과 상담 시 참고할 점을 확인하세요.`;
+
+const jsonLd = withContext([
+  breadcrumbSchema([
+    { name: '홈', path: '/' },
+    { name: '작업', path: '/work/' },
+    { name: work.styleName, path },
+  ]),
+]);
+---
+
+<BaseLayout title={title} description={description} path={path} ogImage={work.heroImage.src} jsonLd={jsonLd}>
+  <article class="work-detail">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { name: '홈', path: '/' },
+          { name: '작업', path: '/work/' },
+          { name: work.shortLabel },
+        ]}
+      />
+
+      <p class="eyebrow"><span class="num">{work.number}</span> SELECTED WORK</p>
+      <h1>{work.styleName}</h1>
+
+      <div class="work-photos">
+        <figure class="photo-main">
+          <Picture
+            src={work.heroImage.src}
+            alt={work.heroImage.alt}
+            widths={[480, 768, 1100]}
+            sizes="(max-width: 860px) 92vw, 900px"
+            formats={['avif', 'webp']}
+            fallbackFormat="jpeg"
+            loading="eager"
+            fetchpriority="high"
+            style={workImageStyle(work.heroImage)}
+          />
+        </figure>
+        {
+          work.secondaryImage && (
+            <figure class="photo-secondary">
+              <Picture
+                src={work.secondaryImage.src}
+                alt={work.secondaryImage.alt}
+                widths={[320, 560]}
+                sizes="(max-width: 860px) 92vw, 420px"
+                formats={['avif', 'webp']}
+                fallbackFormat="jpeg"
+                loading="lazy"
+                style={workImageStyle(work.secondaryImage)}
+              />
+            </figure>
+          )
+        }
+      </div>
+
+      <div class="work-body">
+        <section aria-labelledby="features-title">
+          <h2 id="features-title">디자인 특징</h2>
+          <ul>
+            {work.observedFeatures.map((feature) => <li>{feature}</li>)}
+          </ul>
+        </section>
+
+        <section aria-labelledby="who-title">
+          <h2 id="who-title">이런 상담에 참고하면 좋습니다</h2>
+          <ul class="tag-list">
+            {matchedConcerns.map((concern) => <li class="tag">{concern.text}</li>)}
+          </ul>
+          <p>{work.consultationNote}</p>
+        </section>
+
+        <p class="disclaimer">{hairResultDisclaimer}</p>
+
+        <div class="work-cta">
+          <a
+            class="btn btn-primary"
+            href={CONTACT.naverBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {CTA.primary}
+          </a>
+          <p class="cta-sub">{CONTACT.naverSelectNote}</p>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .work-detail {
+    padding-block: 40px 96px;
+  }
+
+  h1 {
+    font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem);
+    margin: 0 0 32px;
+    line-height: 1.3;
+  }
+
+  .work-photos {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+    margin-bottom: 40px;
+  }
+
+  .work-photos figure {
+    margin: 0;
+  }
+
+  .photo-main {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-ivory-deep);
+  }
+
+  .photo-secondary {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--color-ivory-deep);
+    max-width: 420px;
+  }
+
+  .work-photos :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 760px) {
+    .work-photos {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .work-body {
+    max-width: 68ch;
+  }
+
+  .work-body section {
+    margin-bottom: 36px;
+  }
+
+  .work-body h2 {
+    font-size: 1.2rem;
+    margin: 0 0 14px;
+  }
+
+  .work-body ul:not(.tag-list) {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.9;
+  }
+
+  .work-body .tag-list {
+    margin-bottom: 14px;
+  }
+
+  .disclaimer {
+    font-size: 0.88rem;
+    color: var(--color-charcoal-soft);
+    border-top: 1px solid var(--color-line);
+    padding-top: 20px;
+    margin-bottom: 36px;
+  }
+
+  .work-cta {
+    padding-top: 8px;
+  }
+</style>

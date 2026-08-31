@@ -1,0 +1,40 @@
+---
+import { CONTACT, CTA } from '@/data/site';
+---
+
+<div class="mobile-cta">
+  <a
+    class="btn btn-primary btn-block"
+    href={CONTACT.naverBookingUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    {CTA.primary}
+  </a>
+</div>
+
+<style>
+  .mobile-cta {
+    display: none;
+  }
+
+  @media (max-width: 860px) {
+    .mobile-cta {
+      display: block;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 90;
+      padding: 10px 16px calc(10px + var(--safe-bottom));
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: saturate(140%) blur(6px);
+      border-top: 1px solid var(--color-line);
+    }
+
+    .mobile-cta .btn {
+      padding-block: 14px;
+      font-size: 0.94rem;
+    }
+  }
+</style>

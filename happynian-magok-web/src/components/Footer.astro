@@ -1,0 +1,86 @@
+---
+import { BRAND, CONTACT, withBase } from '@/data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <p class="footer-word">강윤 · {BRAND.wordmark}</p>
+      <p class="footer-address">{CONTACT.address}</p>
+    </div>
+
+    <ul class="footer-links">
+      <li>
+        <a href={CONTACT.naverBookingUrl} target="_blank" rel="noopener noreferrer">
+          네이버 예약
+        </a>
+      </li>
+      <li>
+        <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer"> Instagram </a>
+      </li>
+      <li>
+        <a href={CONTACT.naverMapUrl} target="_blank" rel="noopener noreferrer"> 네이버 지도 </a>
+      </li>
+      <li><a href={withBase('/guide/')}>가이드</a></li>
+    </ul>
+
+    <p class="footer-copy">© {year} {BRAND.shopName}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    padding-block: 48px;
+    padding-bottom: calc(48px + var(--safe-bottom));
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-word {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0 6px;
+  }
+
+  .footer-address {
+    margin: 0;
+    color: var(--color-steel-soft);
+    font-size: 0.88rem;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid rgba(246, 241, 232, 0.16);
+    border-bottom: 1px solid rgba(246, 241, 232, 0.16);
+    padding-block: 18px;
+  }
+
+  .footer-links a {
+    text-decoration: none;
+    font-size: 0.88rem;
+    color: var(--color-ivory);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-red);
+  }
+
+  .footer-copy {
+    margin: 0;
+    font-size: 0.78rem;
+    color: rgba(246, 241, 232, 0.55);
+  }
+</style>
