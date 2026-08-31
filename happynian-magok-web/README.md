@@ -3,8 +3,10 @@
 서울 강서구 마곡 Happynian Magok 강윤 디자이너의 공개 웹사이트입니다. Astro + TypeScript로 만든
 정적 사이트이며, 빌드된 HTML에 모든 주요 콘텐츠가 실제 텍스트로 포함됩니다(빈 SPA 아님).
 
-> **현재 상태: PROPOSED — 아직 공개 배포되지 않았습니다.** 아래 "배포 전 설정"을 모두 마친 뒤,
-> 사용자가 직접 확인하고 승인한 다음에만 공개하세요.
+> **현재 상태: 배포 준비 완료, 마지막 한 단계만 남음.** 빌드 결과물을 `gh-pages` 브랜치에
+> 푸시해두었습니다. 저장소 Settings → Pages에서 `gh-pages` 브랜치를 소스로 지정하면
+> `https://kky1790-crypto.github.io/-1-/` 에서 바로 공개됩니다. 자세한 내용은 아래 "현재
+> 배포 상태" 참고.
 
 ## 요구 사항
 
@@ -70,40 +72,41 @@ assets-source-original/   첨부받은 원본 사진 보존본 (빌드에는 src
 
 콘텐츠를 수정하려면 `docs/OWNER_EDIT_GUIDE.md`를 참고하세요.
 
-## 배포 전 설정 (필수)
+## 현재 배포 상태
 
-공개 배포하기 전에 반드시 아래 항목을 확인하고 설정해야 합니다.
+이 사이트는 **GitHub Pages 프로젝트 사이트**로 배포되어 있습니다.
 
-### 1. SITE_URL 교체
+- 소스: `claude/happynian-magok-website-wvon56` 브랜치
+- 빌드 결과물: `gh-pages` 브랜치 (이 브랜치가 실제로 서빙됩니다)
+- 공개 주소: `https://kky1790-crypto.github.io/-1-/` (저장소 이름이 `-1-`이라 주소에
+  포함됩니다 — 아래 "커스텀 도메인으로 바꾸기" 참고)
 
-`src/data/site.ts` 파일의 `SITE_URL` 값이 현재 `https://example.com` (자리표시자)로 되어 있습니다.
-실제 도메인이 정해지면 이 한 곳만 교체하면 canonical 태그, sitemap.xml, Open Graph/Twitter
-이미지 주소가 모두 함께 바뀝니다.
+**마지막으로 사용자가 GitHub에서 한 번만 해주면 됩니다:**
+저장소 → **Settings → Pages** → **Source**를 `Deploy from a branch`로, **Branch**를
+`gh-pages` / `(root)`로 설정하고 **Save**. 몇 분 안에 위 주소에서 접속됩니다.
 
-```ts
-// src/data/site.ts
-export const SITE_URL = 'https://실제-도메인.com';
-```
+## 커스텀 도메인으로 바꾸기 (선택, 나중에)
 
-교체 후 `npm run build`를 다시 실행하세요.
+지금은 GitHub Pages 하위 경로(`/-1-/`)에 배포되어 있습니다. 나중에 원하는 도메인을 연결하려면:
 
-### 2. 공개 배포
+1. `src/data/site.ts`에서 `SITE_URL`을 실제 도메인으로, `BASE_PATH`를 `'/'`로 바꿉니다.
+2. `npm run build`로 다시 빌드한 뒤, `dist/` 내용을 원하는 호스팅(GitHub Pages 커스텀
+   도메인, Cloudflare Pages, Vercel 등)에 다시 배포합니다.
+3. GitHub Pages를 계속 쓴다면 저장소에 `CNAME` 파일을 추가하고 DNS에 해당 레코드를
+   설정하면 됩니다.
 
-이 프로젝트는 정적 사이트(`dist/` 폴더)이므로 정적 호스팅이 가능한 어떤 서비스에도 배포할 수
-있습니다(예: Cloudflare Pages, Vercel, Netlify 등). 이번 작업 범위에는 실제 배포, 도메인 연결이
-포함되지 않았습니다 — 사용자가 원하는 서비스를 직접 선택해 배포해주세요.
+### Google Search Console 등록 (선택, 원하실 때만)
 
-### 3. Google Search Console 등록
-
-도메인 연결과 공개 배포가 끝난 뒤, 사용자가 직접 다음 절차를 진행해야 합니다(이 작업에서는
-실행하지 않았습니다).
+구글 검색에 노출시키고 싶다면 나중에 아래 절차를 진행하시면 됩니다(지금 당장 필요한 건
+아닙니다).
 
 1. [Google Search Console](https://search.google.com/search-console)에 접속
-2. 실제 도메인으로 속성(Property) 추가
-3. 소유권 확인 (DNS 또는 HTML 태그 방식)
-4. `https://실제-도메인.com/sitemap-index.xml` 을 사이트맵으로 제출
+2. `https://kky1790-crypto.github.io/-1-/` 로 속성(Property) 추가 (또는 커스텀 도메인으로
+   바꿨다면 그 주소로)
+3. 소유권 확인 (HTML 태그 방식이 GitHub Pages에서 가장 간단합니다)
+4. `https://kky1790-crypto.github.io/-1-/sitemap-index.xml` 을 사이트맵으로 제출
 
-### 4. 이미지 원본 백업
+## 이미지 원본 백업
 
 `assets-source-original/` 폴더에 첨부받은 원본 사진 7장이 그대로 보존되어 있습니다. 필요 시
 별도로 백업해두는 것을 권장합니다.

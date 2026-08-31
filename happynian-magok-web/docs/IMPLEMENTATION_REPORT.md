@@ -1,8 +1,13 @@
 # 구현 보고서 — Happynian Magok 강윤 디자이너 웹사이트
 
-**상태: PROPOSED — 아직 공개 배포되지 않았습니다.** 이 보고서는 로컬/작업환경 검증 결과만
-담고 있으며, 실제 공개 배포·도메인 연결·Google Search Console 등록·git commit/push/PR은
-이번 작업 범위에 포함되지 않았습니다(사용자 지시에 따름).
+**상태 업데이트 (사용자 요청에 따라 진행):** 소스는 `claude/happynian-magok-website-wvon56`
+브랜치에, 빌드 결과물은 `gh-pages` 브랜치에 푸시되어 있습니다. GitHub Pages를 저장소
+Settings → Pages에서 `gh-pages` 브랜치로 지정하면 `https://kky1790-crypto.github.io/-1-/`
+에서 공개됩니다(이 마지막 설정 토글은 API로 처리할 수 없어 사용자가 직접 눌러야 합니다).
+Google Search Console 등록은 사용자가 원할 때 진행하는 선택 사항으로 남겨두었습니다. 아래
+내용은 이 배포 결정 이전에 로컬/작업환경에서 실행한 검증 결과이며, SITE_URL/BASE_PATH를
+GitHub Pages 구조에 맞게 조정한 뒤 링크 무결성만 추가로 재검증했습니다(전 페이지·전
+내부링크 200 확인, 위 "실제 검증 결과" 표 갱신 없이 별도 확인 완료).
 
 ## 1. 구현 개요
 
