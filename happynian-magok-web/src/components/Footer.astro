@@ -8,7 +8,10 @@ const year = new Date().getFullYear();
   <div class="container footer-inner">
     <div class="footer-brand">
       <p class="footer-word">강윤 · {BRAND.wordmark}</p>
-      <p class="footer-address">{CONTACT.address}</p>
+      <p class="footer-address">{BRAND.shopNameKo} · {CONTACT.address}</p>
+      <p class="footer-address">
+        <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a> · {CONTACT.hours}
+      </p>
     </div>
 
     <ul class="footer-links">

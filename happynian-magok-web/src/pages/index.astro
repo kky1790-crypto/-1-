@@ -257,7 +257,11 @@ const jsonLd = withContext([
           </div>
           <div>
             <dt>영업시간</dt>
-            <dd>{CONTACT.hoursNote}</dd>
+            <dd>{CONTACT.hours}<br />{CONTACT.hoursNote}</dd>
+          </div>
+          <div>
+            <dt>전화</dt>
+            <dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd>
           </div>
         </dl>
       </div>

@@ -43,16 +43,27 @@ export function hairSalonSchema(imageUrl: string) {
   return {
     '@type': 'HairSalon',
     '@id': absoluteBasePath('/#happynian-magok'),
-    name: BRAND.shopName,
+    name: BRAND.shopNameKo,
+    alternateName: [BRAND.shopName, '해피니언 마곡'],
     image: imageUrl,
+    telephone: CONTACT.telephoneE164,
     url: absoluteBasePath('/'),
     address: {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.streetAddress,
       addressLocality: CONTACT.addressLocality,
       addressRegion: CONTACT.addressRegion,
+      postalCode: CONTACT.postalCode,
       addressCountry: 'KR',
     },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: CONTACT.opens,
+        closes: CONTACT.closes,
+      },
+    ],
     sameAs: [CONTACT.instagramUrl, CONTACT.naverBookingUrl, CONTACT.naverMapUrl],
   };
 }

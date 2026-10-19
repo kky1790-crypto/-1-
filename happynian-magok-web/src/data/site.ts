@@ -27,7 +27,7 @@ export function withBase(path: string): string {
 export const BRAND = {
   displayName: '강윤 디자이너 | Happynian Magok',
   shopName: 'Happynian Magok',
-  shopNameKo: '해피니언 마곡',
+  shopNameKo: '해피니언 마곡점',
   wordmark: 'HAPPYNIAN MAGOK',
 } as const;
 
@@ -36,14 +36,19 @@ export const CONTACT = {
   instagramUrl: 'https://www.instagram.com/happynian_kangyoon/',
   naverMapUrl:
     'https://map.naver.com/p/search/해피니언%20마곡/place/1322402318?placePath=%2Fhome%3Fbk_query%3D해피니언%20마곡%26from%3Dmap%26fromPanelNum%3D2%26timestamp%3D202608311741%26locale%3Dko%26svcName%3Dmap_pcv5%26searchText%3D해피니언%20마곡%26from%3Dmap%26fromPanelNum%3D2%26timestamp%3D202608311741%26locale%3Dko%26svcName%3Dmap_pcv5%26searchText%3D해피니언%20마곡&entry=pll&from=map&fromNxList=true&fromPanelNum=2&timestamp=202608310012&locale=ko&svcName=map_pcv5&searchText=해피니언%20마곡&searchType=place&c=15.00,0,0,0,dh',
-  address: '서울특별시 강서구 마곡중앙4로 18, 그랑트윈타워 B동 204호',
+  address: '서울특별시 강서구 마곡중앙4로 18, 그랑트윈타워 B동 204~205호',
   addressRegion: '서울특별시',
   addressLocality: '강서구',
-  streetAddress: '마곡중앙4로 18, 그랑트윈타워 B동 204호',
-  postalCode: '',
-  transit: '마곡역 4번 출구에서 약 158m',
-  parking: '그랑트윈타워 B동 주차장 이용',
-  hoursNote: '영업시간은 변동될 수 있어 정확한 예약 가능 시간은 네이버 예약에서 확인해주세요.',
+  streetAddress: '마곡중앙4로 18, 그랑트윈타워 B동 204~205호',
+  postalCode: '07631',
+  telephone: '02-6956-5542',
+  telephoneE164: '+82-2-6956-5542',
+  transit: '마곡역 4번·5번 출구에서 도보 5분 이내',
+  parking: '그랑트윈타워 B동 주차장 이용 (커트 1시간, 펌·염색 최대 2시간 주차 지원)',
+  hours: '매일 10:30~20:30',
+  opens: '10:30',
+  closes: '20:30',
+  hoursNote: '정확한 예약 가능 시간은 네이버 예약에서 확인해주세요.',
   naverSelectNote: '네이버 예약 화면에서 디자이너 ‘강윤’을 선택해주세요.',
 } as const;
 
